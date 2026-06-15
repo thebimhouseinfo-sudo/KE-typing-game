@@ -333,7 +333,7 @@ export const KEYBOARD_KEYS: KeyboardKey[] = [
   { key: 'shift-right', display: 'Shift ⇧', finger: 'right-pinky', row: 'bottom' },
 
   // Space row
-  { key: 'space', display: '⏱️ [_Khoảng Trắng_]', finger: 'thumb', row: 'space' }
+  { key: 'space', display: '⏱️ (Khoảng Trắng)', finger: 'thumb', row: 'space' }
 ];
 
 export const FINGER_COLORS = {

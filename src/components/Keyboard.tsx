@@ -59,12 +59,12 @@ export default function Keyboard({ targetKey, pressedKey }: KeyboardProps) {
       <div
         id={`key-btn-${key.key}`}
         key={key.key}
-        className={`flex items-center justify-center rounded-xl font-mono text-xs sm:text-sm font-bold border-2 select-none shadow-sm transition-all duration-100 ${widthClass} ${
+        className={`flex items-center justify-center rounded-xl font-mono text-xs sm:text-sm font-bold select-none transition-all duration-100 ${widthClass} ${
           activePressed
-            ? 'bg-slate-800 text-white border-slate-900 translate-y-1 shadow-inner'
+            ? 'bg-[#35354a] text-white scale-95 shadow-inner'
             : activeTarget
-            ? 'bg-yellow-300 text-slate-900 border-yellow-500 scale-105 ring-4 ring-yellow-200 animate-pulse'
-            : `${fingerColor.bg} ${fingerColor.border} ${fingerColor.text}`
+            ? 'bg-[#FFEAA7] text-[#35354a] scale-105 ring-4 ring-[#FFEAA7]/60 shadow-[0_8px_20px_rgba(0,0,0,0.08)] animate-pulse'
+            : `${fingerColor.bg} ${fingerColor.text} shadow-[0_4px_10px_rgba(60,60,100,0.06)]`
         }`}
       >
         {key.display}
@@ -73,7 +73,7 @@ export default function Keyboard({ targetKey, pressedKey }: KeyboardProps) {
   };
 
   return (
-    <div id="virtual-keyboard" className="bg-slate-100 dark:bg-slate-900 p-4 rounded-3xl border-4 border-slate-300 dark:border-slate-800 shadow-lg space-y-1.5 w-full max-w-4xl mx-auto overflow-x-auto">
+    <div id="virtual-keyboard" className="bg-white rounded-3xl p-4 md:p-6 shadow-[0_12px_30px_rgba(60,60,100,0.08)] space-y-1.5 w-full max-w-4xl mx-auto overflow-x-auto">
       {/* Row 1 */}
       <div className="flex justify-center gap-1 min-w-[500px]">
         {numberRow.map(renderKey)}
@@ -95,7 +95,7 @@ export default function Keyboard({ targetKey, pressedKey }: KeyboardProps) {
         {spaceRow.map(renderKey)}
       </div>
 
-      <div className="text-center pt-2 text-[10px] sm:text-xs text-slate-400 font-medium">
+      <div className="text-center pt-2 text-[10px] sm:text-xs text-[#8a8aa0] font-bold">
         ⭐ Phím có màu giống nhau nghĩa là gõ bằng cùng một ngón tay đó bé ơi!
       </div>
     </div>
