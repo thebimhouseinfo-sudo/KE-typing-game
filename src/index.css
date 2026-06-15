@@ -6,42 +6,61 @@
   --font-mono: "Quicksand", ui-monospace, SFMono-Regular, monospace;
 }
 
-/* Storybook Adventure Theme Colors */
+/* Soft Gradient Theme - Based on reference style */
 :root {
-  /* Background - warm cream */
-  --bg-cream: #FFF9F0;
-  --bg-gradient-start: #FFF8E8;
-  --bg-gradient-end: #F9F5FF;
+  --bg1: #eef7ff;
+  --bg2: #f8fcff;
+  --blue: #5b8cff;
+  --blue2: #7aa8ff;
+  --text: #35354a;
+  --muted: #8a8aa0;
   
-  /* Card - paper-like */
-  --card-bg: #FFFDF8;
+  /* Card backgrounds */
+  --card-bg: #ffffff;
   
-  /* Borders - book frame style */
-  --border-light: #E8DCC8;
-  --border-medium: #D9B97E;
-  --border-dark: #C9A46A;
-  
-  /* Shadow - sticker style */
-  --shadow-color: #D8C8AF;
-  
-  /* Button colors */
-  --btn-primary: #FFB84D;
-  --btn-success: #69C36D;
-  --btn-danger: #F26D6D;
-  --btn-locked: #BDBDBD;
-  
-  /* Island colors */
+  /* Island colors - softer gradients */
   --island-1: #F8D77A;
   --island-2: #7DC7FF;
   --island-3: #9BE38F;
   --island-4: #C79CFF;
 }
 
-/* Custom background pattern */
-.bg-dot-pattern {
-  background-color: var(--bg-cream);
-  background-image: radial-gradient(var(--border-medium) 2px, transparent 2px);
-  background-size: 24px 24px;
+/* Custom background gradient */
+.bg-gradient-soft {
+  background: linear-gradient(160deg, var(--bg1), var(--bg2));
+}
+
+/* Decorative circles */
+.deco {
+  position: fixed;
+  border-radius: 50%;
+  opacity: 0.35;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.deco1 {
+  width: 180px;
+  height: 180px;
+  background: #bcd4ff;
+  top: -50px;
+  left: -50px;
+}
+
+.deco2 {
+  width: 140px;
+  height: 140px;
+  background: #a9e7ff;
+  right: -50px;
+  top: 60%;
+}
+
+.deco3 {
+  width: 100px;
+  height: 100px;
+  background: #d7cbff;
+  left: 50px;
+  bottom: 40px;
 }
 
 /* Custom animations utilities */
