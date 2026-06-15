@@ -220,7 +220,6 @@ export default function App() {
               <h1 className="text-2xl md:text-3xl font-sans font-black tracking-tight text-[#35354a] uppercase italic flex items-center gap-1">
                 BÉ TẬP GÕ PHÍM <Sparkles className="w-6 h-6 text-[#5b8cff] fill-[#5b8cff] animate-pulse" />
               </h1>
-              <p className="text-[11px] font-black text-[#8a8aa0] uppercase tracking-widest font-mono">ĐÔI TAY VÀNG VIỆT NAM</p>
             </div>
           </div>
 
@@ -310,8 +309,7 @@ export default function App() {
 
         {/* Footer info badge */}
         <footer className="mt-10 text-center text-[13px] text-[#8a8aa0] font-medium border-t border-dashed border-[rgba(0,0,0,0.08)] pt-5">
-          <p>Thiết kế dành riêng cho học sinh & trẻ em Việt Nam rèn luyện tư thế gõ phím chuẩn thế giới.</p>
-          <p className="mt-1 font-mono">Vương Quốc Gõ Phím © 2026</p>
+          <p>Made with ♥ for little learners — Kid eschool</p>
         </footer>
       </div>
     </div>
