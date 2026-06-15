@@ -608,14 +608,25 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
 
   // Level 9 custom text input state
   const [customTextInput, setCustomTextInput] = useState('');
+  const [sentences, setSentences] = useState<string[]>([]);
+  const [currentSentenceIndex, setCurrentSentenceIndex] = useState(0);
+  const [isTypingMode, setIsTypingMode] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Key tracking helper for the guides
   const [targetPhysKey, setTargetPhysKey] = useState<string | null>(' ');
 
-  // Get current raw items - For lvl-9, use customTextInput if provided
-  const targetItems = level.id === 'lvl-9' && customTextInput.trim() ? [customTextInput.trim()] : level.targetItems;
+  // Split text into sentences (ending with . ? ! or newline)
+  const getSentences = (text: string): string[] => {
+    return text.split(/(?<=[.!?])\s+|\n+/).filter(s => s.trim().length > 0);
+  };
+
+  // Get current raw items - For lvl-9, use sentences if in typing mode
+  const targetItems = level.id === 'lvl-9' && isTypingMode && sentences.length > 0 
+    ? sentences 
+    : (level.id === 'lvl-9' && customTextInput.trim() ? [customTextInput.trim()] : level.targetItems);
+  
   const currentItem = targetItems[currentIndex] || '';
 
   // Get spelling formula suggestion for Vietnam kids
@@ -841,9 +852,11 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
 
     const rawInput = e.target.value;
     const isBubbleRace = level.id === 'lvl-10';
-    const targetClean = isBubbleRace ? '' : currentItem;
+    const isLevel9TypingMode = level.id === 'lvl-9' && isTypingMode && sentences.length > 0;
+    
+    let targetClean = isBubbleRace ? '' : currentItem;
 
-    if (!isBubbleRace && rawInput === ' ') {
+    if (!isBubbleRace && !isLevel9TypingMode && rawInput === ' ') {
       // Ignore single leading space to prevent double-space errors from advancing previous word
       e.target.value = '';
       return;
@@ -864,6 +877,45 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
     }
 
     setKeystrokes(prev => prev + 1);
+
+    // Level 9 Typing Mode - sentence by sentence
+    if (isLevel9TypingMode) {
+      setTypedValue(val);
+      
+      // Check if sentence is complete
+      if (val === targetClean) {
+        playSound('correct');
+        triggerConfetti();
+        setFeedbackEffect('correct');
+        setScore(prev => prev + targetClean.length * 15);
+        
+        // Clear input
+        setTypedValue('');
+        e.target.value = '';
+        
+        // Move to next sentence or finish
+        if (currentSentenceIndex < sentences.length - 1) {
+          setCurrentSentenceIndex(prev => prev + 1);
+          setCurrentIndex(prev => prev + 1);
+          updateKeyboardGuide('', sentences[currentSentenceIndex + 1]);
+        } else {
+          // All sentences done!
+          handleLevelComplete();
+        }
+        return;
+      }
+      
+      // Check prefix match
+      const isCorrectSequence = targetClean.startsWith(val);
+      if (isCorrectSequence) {
+        updateKeyboardGuide(val, targetClean);
+      } else {
+        playSound('wrong');
+        setFeedbackEffect('wrong');
+        setErrors(prev => prev + 1);
+      }
+      return;
+    }
 
     // Let's analyze bubble mode vs standard mode
     if (level.id === 'lvl-10') {
@@ -1154,20 +1206,20 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
                       playSound('popup');
                       onUpdateInputMethod?.('telex');
                     }}
-                    className={`relative p-4 rounded-xl border-4 text-left transition-all hover:translate-y-[-2px] ${
+                    className={`relative p-5 rounded-3xl text-left transition-all duration-250 ${
                       profile.inputMethod === 'telex'
-                        ? 'bg-[#FFEAA7] border-[#2D3436] shadow-[4px_4px_0px_0px_rgba(45,52,54,1)] scale-102'
-                        : 'bg-white border-[#2D3436]/40 text-slate-500 hover:border-[#2D3436]'
+                        ? 'bg-white shadow-[0_12px_30px_rgba(60,60,100,0.08)] hover:shadow-[0_18px_40px_rgba(91,140,255,0.25)] hover:translate-y-[-3px] scale-102 border-2 border-[#5b8cff]/30'
+                        : 'bg-white shadow-[0_12px_30px_rgba(60,60,100,0.08)] hover:shadow-[0_18px_40px_rgba(91,140,255,0.25)] hover:translate-y-[-3px] border-0'
                     }`}
                   >
-                    <div className="flex justify-between items-center mb-1">
-                      <span className="font-sans font-black text-sm md:text-base font-extrabold">⌨️ Kiểu gõ TELEX</span>
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="font-sans font-black text-sm md:text-base text-[#35354a]">⌨️ Kiểu gõ TELEX</span>
                       {profile.inputMethod === 'telex' && (
-                        <span className="bg-[#6C5CE7] text-white border-2 border-[#2D3436] text-[9px] font-black py-0.5 px-2 rounded-full uppercase">ĐANG CHỌN</span>
+                        <span className="bg-gradient-to-br from-[#5b8cff] to-[#7aa8ff] text-white border-0 text-[9px] font-black py-1 px-3 rounded-full uppercase shadow-[0_4px_12px_rgba(91,140,255,0.25)]">ĐANG CHỌN</span>
                       )}
                     </div>
-                    <p className="text-[10px] md:text-xs font-semibold leading-relaxed text-slate-600">
-                      Phổ biến và thông dụng nhất! Dùng chữ cái để gõ dấu: ví dụ gõ <strong>aa</strong> ra <strong>â</strong>, gõ <strong>s</strong> ra dấu <strong>sắc</strong>.
+                    <p className="text-[10px] md:text-xs font-semibold leading-relaxed text-[#8a8aa0]">
+                      Phổ biến và thông dụng nhất! Dùng chữ cái để gõ dấu: ví dụ gõ <strong className="text-[#5b8cff]">aa</strong> ra <strong className="text-[#5b8cff]">â</strong>, gõ <strong className="text-[#5b8cff]">s</strong> ra dấu <strong className="text-[#5b8cff]">sắc</strong>.
                     </p>
                   </button>
 
@@ -1177,20 +1229,20 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
                       playSound('popup');
                       onUpdateInputMethod?.('vni');
                     }}
-                    className={`relative p-4 rounded-xl border-4 text-left transition-all hover:translate-y-[-2px] ${
+                    className={`relative p-5 rounded-3xl text-left transition-all duration-250 ${
                       profile.inputMethod === 'vni'
-                        ? 'bg-[#55EFC4]/20 border-[#2D3436] shadow-[4px_4px_0px_0px_rgba(45,52,54,1)] scale-102'
-                        : 'bg-white border-[#2D3436]/40 text-slate-500 hover:border-[#2D3436]'
+                        ? 'bg-white shadow-[0_12px_30px_rgba(60,60,100,0.08)] hover:shadow-[0_18px_40px_rgba(91,140,255,0.25)] hover:translate-y-[-3px] scale-102 border-2 border-[#5b8cff]/30'
+                        : 'bg-white shadow-[0_12px_30px_rgba(60,60,100,0.08)] hover:shadow-[0_18px_40px_rgba(91,140,255,0.25)] hover:translate-y-[-3px] border-0'
                     }`}
                   >
-                    <div className="flex justify-between items-center mb-1">
-                      <span className="font-sans font-black text-sm md:text-base font-extrabold">🔢 Kiểu gõ VNI</span>
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="font-sans font-black text-sm md:text-base text-[#35354a]">🔢 Kiểu gõ VNI</span>
                       {profile.inputMethod === 'vni' && (
-                        <span className="bg-[#6C5CE7] text-white border-2 border-[#2D3436] text-[9px] font-black py-0.5 px-2 rounded-full uppercase">ĐANG CHỌN</span>
+                        <span className="bg-gradient-to-br from-[#5b8cff] to-[#7aa8ff] text-white border-0 text-[9px] font-black py-1 px-3 rounded-full uppercase shadow-[0_4px_12px_rgba(91,140,255,0.25)]">ĐANG CHỌN</span>
                       )}
                     </div>
-                    <p className="text-[10px] md:text-xs font-semibold leading-relaxed text-slate-600">
-                      Cực kỳ dễ nhớ! Dùng hàng phím số từ 1 đến 9 để gõ dấu: ví dụ gõ <strong>a6</strong> ra <strong>â</strong>, gõ <strong>1</strong> ra dấu <strong>sắc</strong>.
+                    <p className="text-[10px] md:text-xs font-semibold leading-relaxed text-[#8a8aa0]">
+                      Cực kỳ dễ nhớ! Dùng hàng phím số từ 1 đến 9 để gõ dấu: ví dụ gõ <strong className="text-[#5b8cff]">a6</strong> ra <strong className="text-[#5b8cff]">â</strong>, gõ <strong className="text-[#5b8cff]">1</strong> ra dấu <strong className="text-[#5b8cff]">sắc</strong>.
                     </p>
                   </button>
                 </div>
@@ -1657,44 +1709,71 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
 
                   {/* Custom Text Input Area */}
                   <div className="w-full space-y-4">
-                    <label className="block text-[#35354a] font-sans font-black text-sm uppercase tracking-wide">
-                      📝 Nhập đoạn văn em muốn luyện gõ:
-                    </label>
-                    <textarea
-                      id="lvl-9-custom-text-input"
-                      value={customTextInput}
-                      onChange={(e) => {
-                        setCustomTextInput(e.target.value);
-                        setCurrentIndex(0);
-                        setTypedValue('');
-                        playSound('key-press');
-                      }}
-                      placeholder="Nhập vào đây đoạn văn bản em yêu thích để bắt đầu luyện gõ..."
-                      className="w-full min-h-[120px] p-4 rounded-2xl border-0 bg-[#f4f4f7] text-[#35354a] font-sans text-base font-semibold shadow-[0_12px_30px_rgba(60,60,100,0.08)] focus:shadow-[0_18px_40px_rgba(91,140,255,0.25)] transition-all resize-none placeholder:text-[#8a8aa0]"
-                    />
-                    
-                    {customTextInput.trim() && (
-                      <div className="bg-gradient-to-br from-[#5b8cff]/10 to-[#7aa8ff]/10 border-2 border-[#5b8cff]/30 rounded-2xl p-4">
-                        <p className="text-xs text-[#8a8aa0] font-bold mb-2">
-                          ✨ Đoạn văn của em có <span className="text-[#5b8cff] font-black">{customTextInput.trim().length}</span> ký tự
+                    {!isTypingMode ? (
+                      <>
+                        <label className="block text-[#35354a] font-sans font-black text-sm uppercase tracking-wide">
+                          📝 Nhập đoạn văn em muốn luyện gõ:
+                        </label>
+                        <textarea
+                          id="lvl-9-custom-text-input"
+                          value={customTextInput}
+                          onChange={(e) => {
+                            setCustomTextInput(e.target.value);
+                            setCurrentIndex(0);
+                            setTypedValue('');
+                            playSound('key-press');
+                          }}
+                          placeholder="Nhập vào đây đoạn văn bản em yêu thích để bắt đầu luyện gõ..."
+                          className="w-full min-h-[120px] p-4 rounded-2xl border-0 bg-[#f4f4f7] text-[#35354a] font-sans text-base font-semibold shadow-[0_12px_30px_rgba(60,60,100,0.08)] focus:shadow-[0_18px_40px_rgba(91,140,255,0.25)] transition-all resize-none placeholder:text-[#8a8aa0]"
+                        />
+                        
+                        {customTextInput.trim() && (
+                          <div className="bg-gradient-to-br from-[#5b8cff]/10 to-[#7aa8ff]/10 border-2 border-[#5b8cff]/30 rounded-2xl p-4">
+                            <p className="text-xs text-[#8a8aa0] font-bold mb-2">
+                              ✨ Đoạn văn của em có <span className="text-[#5b8cff] font-black">{customTextInput.trim().length}</span> ký tự
+                            </p>
+                            <button
+                              onClick={() => {
+                                const sents = getSentences(customTextInput);
+                                setSentences(sents);
+                                setCurrentSentenceIndex(0);
+                                setCurrentIndex(0);
+                                setTypedValue('');
+                                setIsTypingMode(true);
+                                inputRef.current?.focus();
+                                playSound('popup');
+                              }}
+                              className="bg-gradient-to-br from-[#5b8cff] to-[#7aa8ff] text-white font-sans font-black text-sm py-2 px-6 rounded-full shadow-[0_8px_20px_rgba(91,140,255,0.25)] transition-all hover:translate-y-[-2px] active:translate-y-0"
+                            >
+                              🚀 Bắt đầu gõ ngay!
+                            </button>
+                          </div>
+                        )}
+                      </>
+                    ) : (
+                      <div className="space-y-3">
+                        <p className="text-xs text-[#8a8aa0] font-black uppercase">
+                          Câu {currentSentenceIndex + 1} / {sentences.length}
                         </p>
                         <button
                           onClick={() => {
+                            setIsTypingMode(false);
+                            setSentences([]);
+                            setCurrentSentenceIndex(0);
                             setCurrentIndex(0);
                             setTypedValue('');
-                            inputRef.current?.focus();
-                            playSound('popup');
+                            playSound('click');
                           }}
-                          className="bg-gradient-to-br from-[#5b8cff] to-[#7aa8ff] text-white font-sans font-black text-sm py-2 px-6 rounded-full shadow-[0_8px_20px_rgba(91,140,255,0.25)] transition-all hover:translate-y-[-2px] active:translate-y-0"
+                          className="text-xs text-[#8a8aa0] font-bold hover:text-[#5b8cff] transition-colors underline"
                         >
-                          🚀 Bắt đầu gõ ngay!
+                          ← Quay lại chỉnh sửa
                         </button>
                       </div>
                     )}
                   </div>
 
                   {/* Display current target when typing */}
-                  {customTextInput.trim() && (
+                  {isTypingMode && sentences.length > 0 && (
                     <div className="space-y-4 pt-4 border-t-2 border-dashed border-[#e8e8ed] w-full">
                       <p className="text-xs text-[#8a8aa0] font-black uppercase">Đang gõ:</p>
                       <div id="target-item-word" className="text-3xl md:text-4xl font-sans tracking-wide font-black text-[#35354a] select-none flex justify-center items-center flex-wrap gap-x-1 gap-y-2">
