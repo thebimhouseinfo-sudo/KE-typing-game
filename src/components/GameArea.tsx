@@ -606,13 +606,16 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
   const gameIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const bubbleSpawnTimerRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Level 9 custom text input state
+  const [customTextInput, setCustomTextInput] = useState('');
+
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Key tracking helper for the guides
   const [targetPhysKey, setTargetPhysKey] = useState<string | null>(' ');
 
-  // Get current raw items
-  const targetItems = level.targetItems;
+  // Get current raw items - For lvl-9, use customTextInput if provided
+  const targetItems = level.id === 'lvl-9' && customTextInput.trim() ? [customTextInput.trim()] : level.targetItems;
   const currentItem = targetItems[currentIndex] || '';
 
   // Get spelling formula suggestion for Vietnam kids
@@ -1643,6 +1646,78 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
 
                   {/* Ceiling warning red indicator line */}
                   <div className="absolute top-1 left-0 right-0 h-1 bg-dashed border-t border-rose-400 opacity-60 pointer-events-none" />
+                </div>
+              ) : level.id === 'lvl-9' ? (
+                /* LEVEL 9 - CUSTOM TEXT INPUT PANEL */
+                <div className="flex-1 flex flex-col items-center justify-center py-6 text-center space-y-6 w-full max-w-3xl">
+                  {/* Category flag banner */}
+                  <span className="bg-gradient-to-br from-[#5b8cff] to-[#7aa8ff] text-white font-black uppercase px-4 py-2 rounded-full text-sm shadow-[0_8px_20px_rgba(91,140,255,0.25)]">
+                    ⌨️ Tập Gõ Văn Bản Của Em
+                  </span>
+
+                  {/* Custom Text Input Area */}
+                  <div className="w-full space-y-4">
+                    <label className="block text-[#35354a] font-sans font-black text-sm uppercase tracking-wide">
+                      📝 Nhập đoạn văn em muốn luyện gõ:
+                    </label>
+                    <textarea
+                      id="lvl-9-custom-text-input"
+                      value={customTextInput}
+                      onChange={(e) => {
+                        setCustomTextInput(e.target.value);
+                        setCurrentIndex(0);
+                        setTypedValue('');
+                        playSound('key-press');
+                      }}
+                      placeholder="Nhập vào đây đoạn văn bản em yêu thích để bắt đầu luyện gõ..."
+                      className="w-full min-h-[120px] p-4 rounded-2xl border-0 bg-[#f4f4f7] text-[#35354a] font-sans text-base font-semibold shadow-[0_12px_30px_rgba(60,60,100,0.08)] focus:shadow-[0_18px_40px_rgba(91,140,255,0.25)] transition-all resize-none placeholder:text-[#8a8aa0]"
+                    />
+                    
+                    {customTextInput.trim() && (
+                      <div className="bg-gradient-to-br from-[#5b8cff]/10 to-[#7aa8ff]/10 border-2 border-[#5b8cff]/30 rounded-2xl p-4">
+                        <p className="text-xs text-[#8a8aa0] font-bold mb-2">
+                          ✨ Đoạn văn của em có <span className="text-[#5b8cff] font-black">{customTextInput.trim().length}</span> ký tự
+                        </p>
+                        <button
+                          onClick={() => {
+                            setCurrentIndex(0);
+                            setTypedValue('');
+                            inputRef.current?.focus();
+                            playSound('popup');
+                          }}
+                          className="bg-gradient-to-br from-[#5b8cff] to-[#7aa8ff] text-white font-sans font-black text-sm py-2 px-6 rounded-full shadow-[0_8px_20px_rgba(91,140,255,0.25)] transition-all hover:translate-y-[-2px] active:translate-y-0"
+                        >
+                          🚀 Bắt đầu gõ ngay!
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Display current target when typing */}
+                  {customTextInput.trim() && (
+                    <div className="space-y-4 pt-4 border-t-2 border-dashed border-[#e8e8ed] w-full">
+                      <p className="text-xs text-[#8a8aa0] font-black uppercase">Đang gõ:</p>
+                      <div id="target-item-word" className="text-3xl md:text-4xl font-sans tracking-wide font-black text-[#35354a] select-none flex justify-center items-center flex-wrap gap-x-1 gap-y-2">
+                        {currentItem.split('').map((char, index) => {
+                          let color;
+                          let bg = '';
+                          if (index < typedValue.length) {
+                            color = 'text-emerald-500 font-bold';
+                          } else if (index === typedValue.length) {
+                            color = 'text-[#5b8cff] animate-pulse underline decoration-[#FDCB6E] decoration-4 underline-offset-8';
+                            bg = 'bg-[#5b8cff]/10 px-1 rounded';
+                          } else {
+                            color = 'text-slate-300';
+                          }
+                          return (
+                            <span key={index} className={`${color} ${bg} transition-all duration-150 transform hover:scale-110 px-0.5`}>
+                              {char === ' ' ? '␣' : char}
+                            </span>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
                 </div>
               ) : (
                 /* REGULAR TEXT CORNER WRITER */
