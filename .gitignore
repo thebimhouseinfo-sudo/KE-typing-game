@@ -5,7 +5,7 @@ node_modules/
 # Build outputs
 dist/
 build/
-target/
+*.tsbuildinfo
 
 # Environment variables
 .env
@@ -15,43 +15,45 @@ target/
 # IDE specific
 .vscode/
 .idea/
+*.swp
+*.swo
 
-# Python
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+
+# Coverage reports
+coverage/
+htmlcov/
+*.coverage
+
+# Python specific (if applicable)
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
 .Python
+env/
 venv/
 .venv/
-.env
+pip-log.txt
+pip-delete-this-directory.txt
+.pytest_cache/
+.mypy_cache/
+.tox/
 
-# Logs
-*.log
-
-# OS generated files
-.DS_Store
-Thumbs.db
-
-# Coverage reports
-coverage/
-htmlcov/
-.coverage
-
-# Temporary files
-*.tmp
-*.swp
-*.swo
-
-# Compressed files
+# Compressed archives
 *.zip
+*.tar.gz
+*.tar.bz2
+*.tar.xz
 *.gz
-*.tar
-*.tgz
+*.rar
+*.7z
 *.bz2
 *.xz
-*.7z
-*.rar
 *.zst
 *.lz4
 *.lzh
@@ -62,20 +64,4 @@ htmlcov/
 *.Z
 *.lz
 *.lzo
-*.tar.gz
-*.tar.bz2
-*.tar.xz
-*.tar.zst
-
-# MyPy cache
-.mypy_cache/
-# PyTest cache
-.pytest_cache/
-
-# Gradle
-.gradle/
-
-# Vite
-.vite/
-
 ```
