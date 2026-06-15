@@ -5,6 +5,7 @@ import { playSound } from '../utils/audio';
 import Keyboard from './Keyboard';
 import HandsVisualizer from './HandsVisualizer';
 import { Sparkles, Trophy, ArrowLeft, RotateCcw, Volume2, Heart, Award, Star, Zap } from 'lucide-react';
+import typingBanner from '../assets/images/typing_banner_1780053365877.png';
 
 interface GameAreaProps {
   level: Level;
@@ -576,7 +577,6 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
   const [isPlaying, setIsPlaying] = useState(true);
   const [showResults, setShowResults] = useState(false);
   const [showHandOverlay, setShowHandOverlay] = useState(false);
-  const [showInstructionScreen, setShowInstructionScreen] = useState(true);
   
   // Game metrics
   const [typedValue, setTypedValue] = useState('');
@@ -619,14 +619,14 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
   const currentFormula = level.helperTips && level.helperTips[currentItem];
 
   // Helper boolean to check if active level is a Vietnamese accent or phrase level
-  const isVietnameseLevel = ['vi-letters', 'vi-words', 'vi-sentences'].includes(level.category);
-  const usesVietnameseKeyboard = ['vi-letters', 'vi-words', 'vi-sentences', 'bubble-race'].includes(level.category);
+  const isVietnameseLevel = ['vietnamese'].includes(level.category);
+  const usesVietnameseKeyboard = ['vietnamese', 'typing-challenge'].includes(level.category);
 
   // Start initialization
   useEffect(() => {
-    if (showInstructionScreen) return;
+    if (false) return;
 
-    if (level.category === 'bubble-race') {
+    if (level.id === 'lvl-10') {
       // Spawn initial bubbles
       spawnBubble();
       spawnBubble();
@@ -652,7 +652,7 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
       if (gameIntervalRef.current) clearInterval(gameIntervalRef.current);
       if (bubbleSpawnTimerRef.current) clearInterval(bubbleSpawnTimerRef.current);
     };
-  }, [currentIndex, level.category, showInstructionScreen]);
+  }, [currentIndex, level.category, false]);
 
   const updateKeyboardGuide = (typed: string, target: string) => {
     if (!target) return;
@@ -801,21 +801,21 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
 
   // Key tracking to render active keyboard presses in real-time
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (showHandOverlay || showInstructionScreen) return;
+    if (showHandOverlay || false) return;
     const key = e.key;
     if (key === 'Process' || key === 'Dead') return; // Ignore IME compositing keys directly
     setPressedKey(key);
     playSound('key-press');
 
     // Quick clear feature for Enter or Escape inside Bubble Race to help spelling flow
-    if (level.category === 'bubble-race' && (key === 'Enter' || key === 'Escape')) {
+    if (level.id === 'lvl-10' && (key === 'Enter' || key === 'Escape')) {
       setTypedValue('');
       e.currentTarget.value = '';
     }
   };
 
   const handleKeyUp = () => {
-    if (showHandOverlay || showInstructionScreen) return;
+    if (showHandOverlay || false) return;
     setPressedKey(null);
   };
 
@@ -834,10 +834,10 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
 
   // Handle standard typing input
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (showResults || !isPlaying || showHandOverlay || showInstructionScreen) return;
+    if (showResults || !isPlaying || showHandOverlay || false) return;
 
     const rawInput = e.target.value;
-    const isBubbleRace = level.category === 'bubble-race';
+    const isBubbleRace = level.id === 'lvl-10';
     const targetClean = isBubbleRace ? '' : currentItem;
 
     if (!isBubbleRace && rawInput === ' ') {
@@ -863,7 +863,7 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
     setKeystrokes(prev => prev + 1);
 
     // Let's analyze bubble mode vs standard mode
-    if (level.category === 'bubble-race') {
+    if (level.id === 'lvl-10') {
       setTypedValue(val);
       // Check if typed text matches any of the bubbles word
       const cleanedInput = val.trim().toLowerCase();
@@ -1052,7 +1052,7 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
             </div>
           </div>
 
-          {level.category === 'bubble-race' ? (
+          {level.id === 'lvl-10' ? (
             <div className="text-center bg-[#FF7675] border-2 border-[#2D3436] px-3 py-1 rounded-xl shadow-[2px_2px_0px_0px_rgba(45,52,54,1)]">
               <div className="text-[9px] text-slate-800 font-extrabold uppercase">MẠNG SỐNG</div>
               <div className="flex gap-0.5 justify-center mt-0.5">
@@ -1100,13 +1100,13 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
       </div>
 
       {/* Main Play Arena Section */}
-      {showInstructionScreen ? (
+      {false ? (
         <div id="full-page-instruction-screen" className="bg-[#FFFDF6] rounded-3xl border-4 border-[#2D3436] p-6 md:p-8 shadow-[8px_8px_0px_0px_rgba(45,52,54,1)] space-y-6 w-full animate-scale-up">
           
           {/* Kids-friendly visual banner illustration added for graphic comprehension */}
           <div className="w-full relative h-[180px] sm:h-[240px] md:h-[280px] overflow-hidden rounded-2xl border-4 border-[#2D3436] shadow-[4px_4px_0px_0px_rgba(45,52,54,1)] bg-slate-50">
             <img
-              src="/src/assets/images/typing_banner_1780053365877.png"
+              src={typingBanner}
               alt="Bàn phím kỳ thú cùng bé"
               className="w-full h-full object-cover"
               referrerPolicy="no-referrer"
@@ -1134,7 +1134,7 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
           </div>
 
           {/* Conditional Guidance based on Category */}
-          {['vi-letters', 'vi-words', 'vi-sentences', 'bubble-race'].includes(level.category) ? (
+          {['vietnamese', 'typing-challenge'].includes(level.category) ? (
             <div className="space-y-6">
               {/* Question to select input technique */}
               <div className="bg-[#A29BFE]/10 border-4 border-[#2D3436] rounded-2xl p-5 space-y-4 shadow-[4px_4px_0px_0px_rgba(45,52,54,1)]">
@@ -1610,7 +1610,7 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
               )}
 
               {/* BUBBLE POP GAME ARENA */}
-              {level.category === 'bubble-race' ? (
+              {level.id === 'lvl-10' ? (
                 <div className="relative w-full h-[320px] bg-[#74B9FF]/20 border-4 border-dashed border-[#2D3436] rounded-2xl overflow-hidden">
                   
                   {/* Floating Bubbles */}
@@ -1686,7 +1686,7 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
 
               {/* Shared Typing Capturer Bar */}
               <div className="pt-4 border-t-2 border-[#2D3436] flex flex-col items-center gap-3">
-                {level.category === 'bubble-race' ? (
+                {level.id === 'lvl-10' ? (
                   <p className="text-xs text-slate-600 font-extrabold uppercase">Gõ từ trong quả bóng rồi bấm nút <kbd className="bg-white border-2 border-[#2D3436] px-1.5 py-0.5 rounded font-bold text-slate-800">Space ⌴ (Khoảng trắng)</kbd> để bắt bóng</p>
                 ) : (
                   <p className="text-xs text-slate-600 font-extrabold uppercase">Gõ chữ theo mẫu trên màn hình máy tính.</p>
@@ -1724,7 +1724,7 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
                       </span>
                     ) : (
                       <span className="text-slate-400 font-bold select-none text-sm sm:text-base">
-                        {level.category === 'bubble-race' ? "Gõ rồi gõ Khoảng Trắng..." : "Sẵn sàng bàn tay, gõ vào đây..."}
+                        {level.id === 'lvl-10' ? "Gõ rồi gõ Khoảng Trắng..." : "Sẵn sàng bàn tay, gõ vào đây..."}
                       </span>
                     )}
                   </div>

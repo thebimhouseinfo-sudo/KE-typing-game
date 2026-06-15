@@ -1,15 +1,46 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700;900&family=Space+Mono:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Quicksand:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "Space Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-sans: "Baloo 2", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Quicksand", ui-monospace, SFMono-Regular, monospace;
+}
+
+/* Storybook Adventure Theme Colors */
+:root {
+  /* Background - warm cream */
+  --bg-cream: #FFF9F0;
+  --bg-gradient-start: #FFF8E8;
+  --bg-gradient-end: #F9F5FF;
+  
+  /* Card - paper-like */
+  --card-bg: #FFFDF8;
+  
+  /* Borders - book frame style */
+  --border-light: #E8DCC8;
+  --border-medium: #D9B97E;
+  --border-dark: #C9A46A;
+  
+  /* Shadow - sticker style */
+  --shadow-color: #D8C8AF;
+  
+  /* Button colors */
+  --btn-primary: #FFB84D;
+  --btn-success: #69C36D;
+  --btn-danger: #F26D6D;
+  --btn-locked: #BDBDBD;
+  
+  /* Island colors */
+  --island-1: #F8D77A;
+  --island-2: #7DC7FF;
+  --island-3: #9BE38F;
+  --island-4: #C79CFF;
 }
 
 /* Custom background pattern */
 .bg-dot-pattern {
-  background-color: #FFF9E6;
-  background-image: radial-gradient(#FDCB6E 2px, transparent 2px);
+  background-color: var(--bg-cream);
+  background-image: radial-gradient(var(--border-medium) 2px, transparent 2px);
   background-size: 24px 24px;
 }
 

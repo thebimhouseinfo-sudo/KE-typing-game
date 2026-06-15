@@ -3,10 +3,8 @@ import { Level, Badge, KeyboardKey, LeaderboardEntry } from './types';
 export const LEVEL_CATEGORIES = {
   'home-row': '🌸 Hàng Phím Cơ Sở',
   'all-rows': '🚀 Chinh Phục Bàn Phím',
-  'vi-letters': '🇻🇳 Bí Kíp Gõ Tiếng Việt',
-  'vi-words': '🎈 Tập Gõ Từ Hay',
-  'vi-sentences': '📖 Tập Gõ Câu Vui',
-  'bubble-race': '🎮 Thử Thách Bong Bóng'
+  'vietnamese': '🇻🇳 Tiếng Việt',
+  'typing-challenge': '🎮 Thử Thách Gõ Phím'
 };
 
 export const LEVELS: Level[] = [
@@ -73,9 +71,9 @@ export const LEVELS: Level[] = [
   },
   {
     id: 'lvl-6',
-    name: 'Học dấu tiếng Việt phép thuật 🪄',
+    name: 'Ký tự tiếng Việt 🪄',
     description: 'Tập gõ các chữ cái tiếng Việt có dấu cơ bản đ, ă, â, ê, ô, ơ, ư và các dấu thanh',
-    category: 'vi-letters',
+    category: 'vietnamese',
     targetItems: ['đ', 'ă', 'â', 'ê', 'ô', 'ơ', 'ư', 'á', 'à', 'ả', 'ã', 'ạ', 'ấ', 'ầ', 'ẩ', 'ẫ', 'ậ', 'ắ', 'ằ', 'ẳ', 'ẵ', 'ặ', 'ế', 'ề', 'ể', 'ễ', 'ệ', 'ố', 'ồ', 'ổ', 'ỗ', 'ộ', 'ớ', 'ờ', 'ở', 'ỡ', 'ợ', 'ứ', 'ừ', 'ử', 'ữ', 'ự', 'í', 'ì', 'ỉ', 'ĩ', 'ị', 'ó', 'ò', 'ỏ', 'õ', 'ọ', 'ú', 'ù', 'ủ', 'ũ', 'ụ', 'ý', 'ỳ', 'ỷ', 'ỹ', 'ỵ'],
     helperTips: {
       'đ': 'Telex: dd | VNI: d9',
@@ -147,9 +145,9 @@ export const LEVELS: Level[] = [
   },
   {
     id: 'lvl-7',
-    name: 'Ghép từ có dấu đáng yêu 🧸',
+    name: 'Từ tiếng Việt 🧸',
     description: 'Tập gõ từ tiếng Việt ngắn có dấu thanh: sắc, huyền, hỏi, ngã, nặng',
-    category: 'vi-words',
+    category: 'vietnamese',
     targetItems: ['bố', 'mẹ', 'bé', 'cá', 'mèo', 'chó', 'lá', 'bóng', 'hoa', 'sách', 'vở', 'nhà', 'học', 'chuối', 'quả'],
     helperTips: {
       'bố': 'Telex: b-o-o-s | VNI: b-o-6-1',
@@ -173,9 +171,9 @@ export const LEVELS: Level[] = [
   },
   {
     id: 'lvl-8',
-    name: 'Trò chuyện cùng muông thú 🦄',
+    name: 'Câu tiếng Việt 🦄',
     description: 'Thử thách gõ những câu tiếng Việt ngắn có nghĩa thật vui nhộn',
-    category: 'vi-sentences',
+    category: 'vietnamese',
     targetItems: [
       'Bé yêu bố mẹ nhiều lắm.',
       'Sách vở là bạn tốt của em.',
@@ -189,9 +187,18 @@ export const LEVELS: Level[] = [
   },
   {
     id: 'lvl-9',
-    name: 'Truy tìm bong bóng bay 🧼',
+    name: 'Tập Gõ Văn Bản Của Em ⌨️',
+    description: 'Nhập đoạn văn em muốn và bắt đầu luyện gõ!',
+    category: 'typing-challenge',
+    targetItems: [],
+    icon: '⌨️',
+    bgGradient: 'from-emerald-400 to-teal-500'
+  },
+  {
+    id: 'lvl-10',
+    name: 'Bubble Race 🧼',
     description: 'Thử thách đặc biệt gõ các từ rơi tự do trong bong bóng để ghi thật nhiều điểm',
-    category: 'bubble-race',
+    category: 'typing-challenge',
     targetItems: [
       'mặt trời', 'đám mây', 'vòng quay', 'kem bơ', 'kẹo ngọt', 'vương quốc', 'sóng biển',
       'khủng long', 'bút chì', 'ước mơ', 'quả dứa', 'con mèo', 'chú chó', 'con cá',
@@ -251,7 +258,7 @@ export const BADGES: Badge[] = [
     description: 'Đạt thành tích xuất sắc tại đấu trường bong bóng tốc độ',
     emoji: '⚡',
     color: 'bg-pink-100 border-pink-400 text-pink-700',
-    condition: 'Hoàn thành Cấp độ 9'
+    condition: 'Hoàn thành Cấp độ 10'
   }
 ];
 

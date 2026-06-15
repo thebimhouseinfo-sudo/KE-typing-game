@@ -1,20 +1,23 @@
 <div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
+<img width="1200" height="475" alt="GHBanner" src="https://placehold.co/1200x475.png?text=Kids+Typing+Game" />
 </div>
 
-# Run and deploy your AI Studio app
+# Kids Typing Game - Trò Chơi Luyện Gõ Phím
 
-This contains everything you need to run your app locally.
+Ứng dụng web giúp trẻ em luyện gõ phím hiệu quả thông qua các trò chơi tương tác.
 
-View your app in AI Studio: https://ai.studio/apps/39004c89-ae07-4bc3-91cc-580697a385e3
+## Chạy Ứng Dụng Cục Bộ
 
-## Run Locally
+**Yêu cầu:** Node.js
 
-**Prerequisites:**  Node.js
+1. Cài đặt dependencies:
+   ```bash
+   npm install
+   ```
 
+2. Chạy ứng dụng:
+   ```bash
+   npm run dev
+   ```
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+3. Mở trình duyệt và truy cập vào địa chỉ hiển thị trong terminal (thường là `http://localhost:5173`)
