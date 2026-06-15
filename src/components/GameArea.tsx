@@ -587,6 +587,29 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
       exitFullscreen();
     };
   }, []);
+
+  // PostMessage communication with parent Blogger page for progress persistence
+  useEffect(() => {
+    // Request progress data from parent on mount
+    window.parent.postMessage({ type: 'GET_PROGRESS' }, 'https://thebimhouseinfo-sudo.github.io');
+
+    // Listen for progress response from parent
+    const handleMessage = (event: MessageEvent) => {
+      if (event.origin !== 'https://thebimhouseinfo-sudo.github.io') return;
+
+      const message = event.data;
+      if (message.type === 'SEND_PROGRESS' && message.data) {
+        // Progress data received from parent - can be used to restore game state if needed
+        console.log('Received progress from Blogger:', message.data);
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+
+    return () => {
+      window.removeEventListener('message', handleMessage);
+    };
+  }, []);
   
   // Game metrics
   const [typedValue, setTypedValue] = useState('');
@@ -643,7 +666,7 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
   const currentFormula = level.helperTips && level.helperTips[currentItem];
 
   // Helper boolean to check if active level is a Vietnamese accent or phrase level
-  const isVietnameseLevel = ['vietnamese'].includes(level.category);
+  const isVietnameseLevel = ['vietnamese', 'typing-challenge'].includes(level.category);
   const usesVietnameseKeyboard = ['vietnamese', 'typing-challenge'].includes(level.category);
 
   // Start initialization
@@ -907,7 +930,10 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
         if (currentSentenceIndex < sentences.length - 1) {
           setCurrentSentenceIndex(prev => prev + 1);
           setCurrentIndex(prev => prev + 1);
-          updateKeyboardGuide('', sentences[currentSentenceIndex + 1]);
+          setTimeout(() => {
+            inputRef.current?.focus();
+            updateKeyboardGuide('', sentences[currentSentenceIndex + 1]);
+          }, 100);
         } else {
           // All sentences done!
           handleLevelComplete();
@@ -915,8 +941,10 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
         return;
       }
       
-      // Check prefix match
-      const isCorrectSequence = targetClean.startsWith(val);
+      // Check prefix match using Vietnamese-aware comparison
+      const isCorrectSequence = usesVietnameseKeyboard
+        ? isVietnamesePrefixMatch(val, targetClean, profile.inputMethod)
+        : targetClean.startsWith(val);
       if (isCorrectSequence) {
         updateKeyboardGuide(val, targetClean);
       } else {
@@ -1378,7 +1406,7 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
                 {/* LEFT HAND CARD */}
-                <div className="bg-[#FFF5F5] border-4 border-[#FF7675] rounded-3xl p-6 md:p-8 shadow-[6px_6px_0px_0px_rgba(255,118,117,0.3)]">
+                <div className="bg-[#FFF5F5] rounded-3xl p-6 md:p-8 shadow-[6px_6px_0px_0px_rgba(255,118,117,0.3)]">
                   <div className="text-center mb-6">
                     <h3 className="font-sans font-black text-xl md:text-2xl text-[#FF7675] uppercase tracking-wide flex items-center justify-center gap-2">
                       ✋ TAY TRÁI
@@ -1444,7 +1472,7 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
                 </div>
 
                 {/* RIGHT HAND CARD */}
-                <div className="bg-[#E1F5FE] border-4 border-[#0984E3] rounded-3xl p-6 md:p-8 shadow-[6px_6px_0px_0px_rgba(9,132,227,0.3)]">
+                <div className="bg-[#E1F5FE] rounded-3xl p-6 md:p-8 shadow-[6px_6px_0px_0px_rgba(9,132,227,0.3)]">
                   <div className="text-center mb-6">
                     <h3 className="font-sans font-black text-xl md:text-2xl text-[#0984E3] uppercase tracking-wide flex items-center justify-center gap-2">
                       🤚 TAY PHẢI
@@ -1515,7 +1543,7 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
               {getUniqueCharactersOfLevel().length > 0 && (
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   {/* LEFT HAND KEYS CARD */}
-                  <div className="bg-[#FFF5F5] border-4 border-[#FF7675] rounded-3xl p-5 shadow-[4px_4px_0px_0px_rgba(255,118,117,0.3)]">
+                  <div className="bg-[#FFF5F5] rounded-3xl p-5 shadow-[4px_4px_0px_0px_rgba(255,118,117,0.3)]">
                     <h4 className="font-sans font-black text-sm md:text-base text-[#FF7675] uppercase tracking-tight flex items-center gap-1.5 mb-3">
                       ✋ CÁC PHÍM TAY TRÁI
                     </h4>
@@ -1547,7 +1575,7 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
                   </div>
 
                   {/* RIGHT HAND KEYS CARD */}
-                  <div className="bg-[#E1F5FE] border-4 border-[#0984E3] rounded-3xl p-5 shadow-[4px_4px_0px_0px_rgba(9,132,227,0.3)]">
+                  <div className="bg-[#E1F5FE] rounded-3xl p-5 shadow-[4px_4px_0px_0px_rgba(9,132,227,0.3)]">
                     <h4 className="font-sans font-black text-sm md:text-base text-[#0984E3] uppercase tracking-tight flex items-center gap-1.5 mb-3">
                       🤚 CÁC PHÍM TAY PHẢI
                     </h4>
