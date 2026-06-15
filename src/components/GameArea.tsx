@@ -984,17 +984,17 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
         
         // Spawn more bubbles to maintain pace
         setTimeout(spawnBubble, 500);
-      } else {
-        // Safe input auto-clearing logic: if they press Space and completed a word but it didn't match, or
-        // if they pressed Space right after a bubble pop (triggering a trailing stray space like " "),
-        // we check if their current typed string matches the start of any active bubble.
-        // If it does NOT start any bubble, we automatically clear it so they don't get stuck!
-        if (rawInput.endsWith(' ')) {
-          const hasPrefixMatch = bubbles.some(b => b.word.toLowerCase().startsWith(cleanedInput + ' '));
-          if (!hasPrefixMatch) {
-            setTypedValue('');
-            e.target.value = '';
-          }
+        return;
+      }
+      
+      // Only apply auto-clear logic if there's actually content in the input
+      // and it ends with space (user completed a word attempt)
+      if (val.trim() && rawInput.endsWith(' ')) {
+        const hasPrefixMatch = bubbles.some(b => b.word.toLowerCase().startsWith(cleanedInput));
+        if (!hasPrefixMatch) {
+          // Clear only if the typed word doesn't match the start of any bubble
+          setTypedValue('');
+          e.target.value = '';
         }
       }
       return;
