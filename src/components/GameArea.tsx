@@ -649,9 +649,18 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
   // Key tracking helper for the guides
   const [targetPhysKey, setTargetPhysKey] = useState<string | null>(' ');
 
-  // Split text into sentences (ending with . ? ! or newline)
+  // Split text into chunks of 10 words each (for level 9 typing mode)
   const getSentences = (text: string): string[] => {
-    return text.split(/(?<=[.!?])\s+|\n+/).map(s => s.trim()).filter(s => s.length > 0);
+    const words = text.trim().split(/\s+/).filter(w => w.length > 0);
+    const chunks: string[] = [];
+    const chunkSize = 10;
+    
+    for (let i = 0; i < words.length; i += chunkSize) {
+      const chunk = words.slice(i, i + chunkSize).join(' ');
+      chunks.push(chunk);
+    }
+    
+    return chunks;
   };
 
   // Get current raw items - For lvl-9, use sentences if in typing mode
@@ -1413,7 +1422,7 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
                     ) : (
                       <div className="flex flex-col items-center gap-2">
                         <p className="text-xs text-[#8a8aa0] font-black uppercase">
-                          Câu {currentSentenceIndex + 1} / {sentences.length} · Gõ xong sẽ tự chuyển câu tiếp theo
+                          Phần {currentSentenceIndex + 1} / {sentences.length} · Mỗi phần 10 từ, gõ xong tự động chuyển phần tiếp theo
                         </p>
                         <button
                           onClick={() => {
