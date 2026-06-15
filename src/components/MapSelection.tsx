@@ -106,37 +106,37 @@ export default function MapSelection({
   const highestWpm = Object.values(profile.completedLevels || {}).reduce((max, curr) => Math.max(max, curr?.wpm || 0), 0);
 
   return (
-    <div id="map-selection-view" className="space-y-8 animate-fade-in text-[#5C4B37]">
+    <div id="map-selection-view" className="space-y-8 animate-fade-in text-[#35354a]">
       {/* Profile summary banner */}
-      <div className="bg-[#FFFDF8] rounded-3xl border-4 border-[#C9A46A] p-6 shadow-[8px_8px_0px_0px_rgba(201,164,106,1)] flex flex-col md:flex-row justify-between items-center gap-6">
+      <div className="bg-white rounded-3xl p-6 shadow-[0_12px_30px_rgba(60,60,100,0.08)] flex flex-col md:flex-row justify-between items-center gap-6 border-0">
         <div className="flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
-          <div className="w-20 h-20 bg-[#FFEAA7] rounded-full border-4 border-[#C9A46A] flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(201,164,106,1)] overflow-hidden">
+          <div className="w-20 h-20 bg-gradient-to-br from-[#5b8cff] to-[#7aa8ff] rounded-full flex items-center justify-center shadow-[0_8px_20px_rgba(91,140,255,0.25)] overflow-hidden">
             <Avatar avatar={profile.avatar} className="w-14 h-14 -rotate-12" />
           </div>
           <div>
             <div className="flex flex-col sm:flex-row items-center gap-2">
-              <h1 className="text-3xl font-black font-sans tracking-tight text-[#5C4B37] uppercase italic">{profile.name}</h1>
+              <h1 className="text-3xl font-black font-sans tracking-tight text-[#35354a] uppercase italic">{profile.name}</h1>
             </div>
-            <p className="text-[#8B7355] font-bold text-sm mt-1">Học viên gõ phím vàng tương lai</p>
+            <p className="text-[#8a8aa0] font-bold text-sm mt-1">Học viên gõ phím vàng tương lai</p>
             <div className="flex flex-wrap gap-2.5 mt-3 justify-center sm:justify-start">
               <button
                 id="edit-profile-btn"
                 onClick={() => { playSound('popup'); onEditProfile(); }}
-                className="bg-[#FFB84D] text-[#5C4B37] border-2 border-[#C9A46A] text-xs px-3 py-1.5 rounded-xl font-black transition-all hover:translate-y-[-2px] hover:shadow-[3px_3px_0px_0px_rgba(201,164,106,1)] flex items-center gap-1.5"
+                className="bg-white text-[#35354a] text-xs px-4 py-2 rounded-full font-bold shadow-[0_8px_20px_rgba(0,0,0,0.06)] transition-all hover:translate-y-[-3px] flex items-center gap-1.5"
               >
                 <User className="w-4 h-4" /> SỬA HỒ SƠ
               </button>
               <button
                 id="view-leaderboard-btn"
                 onClick={() => { playSound('popup'); onViewLeaderboard(); }}
-                className="bg-[#FFB84D] text-[#5C4B37] border-2 border-[#C9A46A] text-xs px-3 py-1.5 rounded-xl font-black transition-all hover:translate-y-[-2px] hover:shadow-[3px_3px_0px_0px_rgba(201,164,106,1)] flex items-center gap-1.5"
+                className="bg-white text-[#35354a] text-xs px-4 py-2 rounded-full font-bold shadow-[0_8px_20px_rgba(0,0,0,0.06)] transition-all hover:translate-y-[-3px] flex items-center gap-1.5"
               >
                 <Trophy className="w-4 h-4" /> BẢNG XẾP HẠNG
               </button>
               <button
                 id="view-badges-btn"
                 onClick={() => { playSound('popup'); onViewBadges(); }}
-                className="bg-[#74B9FF] text-[#5C4B37] border-2 border-[#C9A46A] text-xs px-3 py-1.5 rounded-xl font-black transition-all hover:translate-y-[-2px] hover:shadow-[3px_3px_0px_0px_rgba(201,164,106,1)] flex items-center gap-1.5"
+                className="bg-gradient-to-br from-[#5b8cff] to-[#7aa8ff] text-white text-xs px-4 py-2 rounded-full font-bold shadow-[0_8px_20px_rgba(91,140,255,0.25)] transition-all hover:translate-y-[-3px] flex items-center gap-1.5"
               >
                 <Award className="w-4 h-4" /> HUY HIỆU ({profile.badges.length})
               </button>
@@ -146,28 +146,28 @@ export default function MapSelection({
 
         {/* Stats display Cards / Bubbles */}
         <div className="grid grid-cols-3 gap-3 w-full md:w-auto">
-          <div className="bg-[#69C36D] border-2 border-[#C9A46A] p-3 rounded-2xl text-center shadow-[3px_3px_0px_0px_rgba(201,164,106,1)]">
-            <Trophy className="w-6 h-6 text-[#5C4B37] mx-auto mb-1 animate-pulse" />
-            <div className="text-xl font-black text-[#5C4B37] font-mono">{profile.score}</div>
-            <div className="text-[10px] text-[#5C4B37] font-black uppercase">ĐIỂM</div>
+          <div className="bg-white p-3 rounded-2xl text-center shadow-[0_12px_30px_rgba(60,60,100,0.08)] border-0">
+            <Trophy className="w-6 h-6 text-[#5b8cff] mx-auto mb-1 animate-pulse" />
+            <div className="text-xl font-black text-[#35354a] font-mono">{profile.score}</div>
+            <div className="text-[10px] text-[#8a8aa0] font-black uppercase">ĐIỂM</div>
           </div>
-          <div className="bg-[#FFEAA7] border-2 border-[#C9A46A] p-3 rounded-2xl text-center shadow-[3px_3px_0px_0px_rgba(201,164,106,1)]">
-            <Star className="w-6 h-6 text-[#5C4B37] fill-[#2D3436] mx-auto mb-1" />
-            <div className="text-xl font-black text-[#5C4B37] font-mono">{totalStars}</div>
-            <div className="text-[10px] text-[#5C4B37] font-black uppercase">SAO</div>
+          <div className="bg-white p-3 rounded-2xl text-center shadow-[0_12px_30px_rgba(60,60,100,0.08)] border-0">
+            <Star className="w-6 h-6 text-[#5b8cff] fill-[#5b8cff] mx-auto mb-1" />
+            <div className="text-xl font-black text-[#35354a] font-mono">{totalStars}</div>
+            <div className="text-[10px] text-[#8a8aa0] font-black uppercase">SAO</div>
           </div>
-          <div className="bg-[#F26D6D] border-2 border-[#C9A46A] p-3 rounded-2xl text-center shadow-[3px_3px_0px_0px_rgba(201,164,106,1)]">
-            <Flame className="w-6 h-6 text-white fill-white mx-auto mb-1" />
-            <div className="text-xl font-black text-[#5C4B37] font-mono">{highestWpm} <span className="text-[10px] font-black">WPM</span></div>
-            <div className="text-[10px] text-[#5C4B37] font-black uppercase">KỶ LỤC</div>
+          <div className="bg-white p-3 rounded-2xl text-center shadow-[0_12px_30px_rgba(60,60,100,0.08)] border-0">
+            <Flame className="w-6 h-6 text-[#5b8cff] fill-[#5b8cff] mx-auto mb-1" />
+            <div className="text-xl font-black text-[#35354a] font-mono">{highestWpm} <span className="text-[10px] font-black">WPM</span></div>
+            <div className="text-[10px] text-[#8a8aa0] font-black uppercase">KỶ LỤC</div>
           </div>
         </div>
       </div>
 
       {/* Map Navigation Carousel */}
-      <div className="bg-[#FFFDF8] border-4 border-[#C9A46A] rounded-3xl overflow-hidden shadow-[8px_8px_0px_0px_rgba(201,164,106,1)]">
+      <div className="bg-white rounded-3xl overflow-hidden shadow-[0_12px_30px_rgba(60,60,100,0.08)] border-0">
         {/* Navigation Banner */}
-        <div className={`p-5 flex justify-between items-center gap-4 border-b-4 border-[#C9A46A] text-[#5C4B37] ${MAP_THEMES[currentCat]?.bannerBg || 'bg-[#6C5CE7]'}`}>
+        <div className={`p-5 flex justify-between items-center gap-4 text-[#35354a] ${MAP_THEMES[currentCat]?.bannerBg || 'bg-[#6C5CE7]'}`}>
           <button
             id="prev-map-btn"
             type="button"
@@ -175,16 +175,16 @@ export default function MapSelection({
               playSound('popup');
               setActiveMapIdx(prev => (prev === 0 ? categories.length - 1 : prev - 1));
             }}
-            className="w-10 h-10 bg-[#FFFDF8] hover:bg-[#FFF8F0] text-[#5C4B37] rounded-full border-2 border-[#C9A46A] flex items-center justify-center font-bold shadow-[2px_2px_0px_0px_rgba(201,164,106,1)] transition-transform hover:scale-105 active:scale-95 shrink-0"
+            className="w-10 h-10 bg-white hover:bg-[#f8fcff] text-[#35354a] rounded-full flex items-center justify-center font-bold shadow-[0_8px_20px_rgba(0,0,0,0.06)] transition-transform hover:scale-105 active:scale-95 shrink-0"
           >
             ◀
           </button>
           
           <div className="text-center">
-            <span className="bg-[#C9A46A]/20 text-[10px] sm:text-xs font-black uppercase tracking-widest px-3 py-1 rounded-full border border-[#C9A46A]/30">
+            <span className="bg-[rgba(91,140,255,0.18)] text-[10px] sm:text-xs font-black uppercase tracking-widest px-3 py-1 rounded-full">
               ĐẢO BÀI HỌC {activeMapIdx + 1} / {categories.length}
             </span>
-            <h2 className="font-sans font-black text-lg sm:text-2xl tracking-tight uppercase italic mt-1 text-[#5C4B37]">
+            <h2 className="font-sans font-black text-lg sm:text-2xl tracking-tight uppercase italic mt-1 text-[#35354a]">
               {MAP_THEMES[currentCat]?.title || LEVEL_CATEGORIES[currentCat] || currentCat}
             </h2>
           </div>
@@ -196,25 +196,25 @@ export default function MapSelection({
               playSound('popup');
               setActiveMapIdx(prev => (prev === categories.length - 1 ? 0 : prev + 1));
             }}
-            className="w-10 h-10 bg-[#FFFDF8] hover:bg-[#FFF8F0] text-[#5C4B37] rounded-full border-2 border-[#C9A46A] flex items-center justify-center font-bold shadow-[2px_2px_0px_0px_rgba(201,164,106,1)] transition-transform hover:scale-105 active:scale-95 shrink-0"
+            className="w-10 h-10 bg-white hover:bg-[#f8fcff] text-[#35354a] rounded-full flex items-center justify-center font-bold shadow-[0_8px_20px_rgba(0,0,0,0.06)] transition-transform hover:scale-105 active:scale-95 shrink-0"
           >
             ▶
           </button>
         </div>
 
         {/* Map Body Content */}
-        <div className={`p-6 md:p-8 space-y-6 bg-gradient-to-b ${MAP_THEMES[currentCat]?.bgGradient || 'from-[#FFF9E8] to-[#F9F5FF]'}`}>
-          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 bg-[#FFFDF8]/90 border-2 border-[#C9A46A] p-4 rounded-2xl">
+        <div className={`p-6 md:p-8 space-y-6 bg-gradient-to-b ${MAP_THEMES[currentCat]?.bgGradient || 'from-[#eef7ff] to-[#f8fcff]'}`}>
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 bg-white/90 p-4 rounded-2xl shadow-[0_12px_30px_rgba(60,60,100,0.08)] border-0">
             <span className="text-4xl shrink-0">🗺️</span>
             <div className="space-y-1">
-              <h4 className="font-sans font-black text-sm uppercase text-[#5C4B37]">
+              <h4 className="font-sans font-black text-sm uppercase text-[#35354a]">
                 Nội dung Đảo Học:
               </h4>
-              <p className="text-xs sm:text-sm font-semibold text-[#8B7355] leading-relaxed">
+              <p className="text-xs sm:text-sm font-semibold text-[#8a8aa0] leading-relaxed">
                 {MAP_THEMES[currentCat]?.desc}
               </p>
               {!currentMapUnlocked && (
-                <div className="text-xs font-black text-[#FF7675] uppercase flex items-center gap-1.5 mt-2 animate-pulse">
+                <div className="text-xs font-black text-[#5b8cff] uppercase flex items-center gap-1.5 mt-2 animate-pulse">
                   <span>🔒 ĐẢO NÀY ĐANG BỊ KHÓA!</span>
                   <span>Bé cần hoàn thành tất cả bài học ở đảo trước để có thể chơi đảo này nhé.</span>
                 </div>
@@ -235,24 +235,24 @@ export default function MapSelection({
                   id={`level-card-${level.id}`}
                   key={level.id}
                   onClick={() => handleSelect(level, levelUnlocked, currentMapUnlocked)}
-                  className={`relative group rounded-3xl p-5 border-4 border-[#C9A46A] transition-all duration-300 cursor-pointer overflow-hidden ${
+                  className={`relative group rounded-3xl p-5 transition-all duration-300 cursor-pointer overflow-hidden border-0 ${
                     isPlayable
-                      ? 'bg-[#FFFDF8] hover:translate-y-[-6px] hover:shadow-[6px_6px_0px_0px_rgba(201,164,106,1)]'
-                      : 'bg-[#FFFDF8]/60 opacity-60'
+                      ? 'bg-white hover:translate-y-[-6px] shadow-[0_12px_30px_rgba(60,60,100,0.08)]'
+                      : 'bg-white/60 opacity-60 shadow-[0_12px_30px_rgba(60,60,100,0.08)]'
                   }`}
                 >
                   <div className={`absolute top-0 left-0 right-0 h-3 bg-gradient-to-r ${level.bgGradient}`} />
 
                   <div className="flex items-start justify-between gap-3 pt-4">
                     <div className="flex items-center gap-3">
-                      <span className={`text-4xl p-2 rounded-2xl bg-gradient-to-br ${level.bgGradient} text-white border-2 border-[#C9A46A] shadow-[2px_2px_0px_0px_rgba(201,164,106,1)]`}>
+                      <span className={`text-4xl p-2 rounded-2xl bg-gradient-to-br ${level.bgGradient} text-white shadow-[0_8px_20px_rgba(91,140,255,0.25)]`}>
                         {level.icon}
                       </span>
                       <div>
-                        <span className="text-xs font-black text-[#A29BFE] uppercase tracking-wider font-mono">
+                        <span className="text-xs font-black text-[#8a8aa0] uppercase tracking-wider font-mono">
                           BÀI HỌC {originalIdx + 1}
                         </span>
-                        <h3 className="font-sans font-black text-[#5C4B37] text-lg group-hover:text-[#C9A46A] transition-colors leading-tight">
+                        <h3 className="font-sans font-black text-[#35354a] text-lg group-hover:text-[#5b8cff] transition-colors leading-tight">
                           {level.name}
                         </h3>
                       </div>
@@ -260,31 +260,31 @@ export default function MapSelection({
 
                     {isPlayable ? (
                       levelStars > 0 ? (
-                        <CheckCircle2 className="w-6 h-6 text-emerald-500 fill-emerald-100 shrink-0 border-2 border-[#C9A46A] rounded-full" />
+                        <CheckCircle2 className="w-6 h-6 text-[#5b8cff] fill-[#eef7ff] shrink-0 rounded-full" />
                       ) : (
-                        <div className="w-3.5 h-3.5 bg-[#F26D6D] rounded-full animate-ping shrink-0 border-2 border-[#C9A46A]" />
+                        <div className="w-3.5 h-3.5 bg-[#5b8cff] rounded-full animate-ping shrink-0" />
                       )
                     ) : (
-                      <Lock className="w-5 h-5 text-slate-500 shrink-0" />
+                      <Lock className="w-5 h-5 text-slate-400 shrink-0" />
                     )}
                   </div>
 
-                  <p className="text-sm font-semibold text-[#8B7355] mt-3 leading-relaxed min-h-[40px]">
+                  <p className="text-sm font-semibold text-[#8a8aa0] mt-3 leading-relaxed min-h-[40px]">
                     {level.description}
                   </p>
 
                   {level.category === 'vietnamese' && level.id === 'lvl-6' && (
-                    <div className="mt-2 bg-[#F26D6D]/10 border-2 border-[#C9A46A] text-xs text-[#5C4B37] font-black rounded-lg px-2.5 py-1 inline-flex items-center gap-1">
+                    <div className="mt-2 bg-[rgba(91,140,255,0.1)] text-xs text-[#35354a] font-black rounded-lg px-2.5 py-1 inline-flex items-center gap-1">
                       🇻🇳 Gồm: đ, ă, â, ê, ô, ơ, ư
                     </div>
                   )}
                   {level.category === 'typing-challenge' && level.id === 'lvl-10' && (
-                    <div className="mt-2 bg-[#69C36D]/20 border-2 border-[#C9A46A] text-xs text-[#5C4B37] font-black rounded-lg px-2.5 py-1 inline-flex items-center gap-1 animate-pulse">
+                    <div className="mt-2 bg-[rgba(91,140,255,0.1)] text-xs text-[#35354a] font-black rounded-lg px-2.5 py-1 inline-flex items-center gap-1 animate-pulse">
                       🛸 Bong bóng bay!
                     </div>
                   )}
 
-                  <div className="mt-4 pt-3 border-t-2 border-[#C9A46A] flex items-center justify-between">
+                  <div className="mt-4 pt-3 border-t border-[rgba(0,0,0,0.08)] flex items-center justify-between">
                     {isPlayable ? (
                       scoreStats ? (
                         <div className="space-y-1 w-full">
@@ -294,29 +294,29 @@ export default function MapSelection({
                                 key={starIdx}
                                 className={`w-5 h-5 ${
                                   starIdx <= levelStars
-                                    ? 'text-[#FDCB6E] fill-[#FDCB6E]'
+                                    ? 'text-[#5b8cff] fill-[#5b8cff]'
                                     : 'text-slate-200'
                                 }`}
                               />
                             ))}
                           </div>
-                          <div className="text-xs text-[#8B7355] font-bold">
-                            Điểm: <strong className="text-[#5C4B37] font-black">{scoreStats.highScore}</strong> | Kỷ lục: <strong className="text-[#5C4B37] font-black">{scoreStats.wpm} WPM</strong>
+                          <div className="text-xs text-[#8a8aa0] font-bold">
+                            Điểm: <strong className="text-[#35354a] font-black">{scoreStats.highScore}</strong> | Kỷ lục: <strong className="text-[#35354a] font-black">{scoreStats.wpm} WPM</strong>
                           </div>
                         </div>
                       ) : (
-                        <span className="text-xs text-[#C9A46A] font-black flex items-center gap-0.5 animate-pulse group-hover:gap-1.5 transition-all uppercase tracking-tight">
+                        <span className="text-xs text-[#5b8cff] font-black flex items-center gap-0.5 animate-pulse group-hover:gap-1.5 transition-all uppercase tracking-tight">
                           Khám phá ngay <ChevronRight className="w-4 h-4" />
                         </span>
                       )
                     ) : (
-                      <span className="text-xs text-slate-500 font-semibold flex items-center gap-1">
+                      <span className="text-xs text-slate-400 font-semibold flex items-center gap-1">
                         🔒 Chờ mở khoá
                       </span>
                     )}
 
                     {level.badgeToUnlock && (
-                      <div className="bg-[#FFEAA7] text-[#5C4B37] text-[10px] font-black px-2 py-0.5 rounded border border-[#C9A46A] flex items-center gap-0.5 shrink-0" title="Có huy hiệu lấp lánh">
+                      <div className="bg-[rgba(91,140,255,0.18)] text-[#35354a] text-[10px] font-black px-2 py-0.5 rounded-full flex items-center gap-0.5 shrink-0" title="Có huy hiệu lấp lánh">
                         🎁 Huy hiệu
                       </div>
                     )}
@@ -329,11 +329,11 @@ export default function MapSelection({
       </div>
 
       {/* Decorative Tips Block for Vietnam kids */}
-      <div id="vi-typing-tip-box" className="bg-[#FFFDF8] border-4 border-[#C9A46A] rounded-3xl p-6 shadow-[5px_5px_0px_0px_rgba(201,164,106,1)] flex items-start gap-4">
+      <div id="vi-typing-tip-box" className="bg-white rounded-3xl p-6 shadow-[0_12px_30px_rgba(60,60,100,0.08)] flex items-start gap-4 border-0">
         <span className="text-4xl">💡</span>
         <div className="space-y-1">
-          <h4 className="font-sans font-black text-[#5C4B37] uppercase tracking-wide text-base">Bé luyện gõ phím thông thái mách nhỏ:</h4>
-          <p className="text-sm text-[#8B7355] font-semibold leading-relaxed">
+          <h4 className="font-sans font-black text-[#35354a] uppercase tracking-wide text-base">Bé luyện gõ phím thông thái mách nhỏ:</h4>
+          <p className="text-sm text-[#8a8aa0] font-semibold leading-relaxed">
             Học gõ phím giúp hai bàn tay của bé phối hợp nhịp nhàng và giúp bé thông minh hơn đấy! Bé hãy chú ý ngồi thẳng lưng, đặt tay lên hàng cơ sở (các phím hông màu như F và J) để các ngón tay tự tìm đúng phím nhé!
           </p>
         </div>

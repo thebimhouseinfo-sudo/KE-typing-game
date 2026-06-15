@@ -151,29 +151,34 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-dot-pattern py-6 px-4 md:py-10 selection:bg-[#55EFC4] text-[#2D3436]">
-      <div className="max-w-6xl mx-auto space-y-8 select-none">
+    <div className="min-h-screen bg-gradient-soft py-6 px-4 md:py-10 selection:bg-[#55EFC4] text-[#35354a] relative overflow-hidden">
+      {/* Decorative circles */}
+      <div className="deco deco1"></div>
+      <div className="deco deco2"></div>
+      <div className="deco deco3"></div>
+      
+      <div className="max-w-6xl mx-auto space-y-8 select-none relative z-10">
         
-        {/* Unified Application Header Bar - Artistic Flair Neo-Brutalist design */}
-        <header className="flex flex-col sm:flex-row justify-between items-center bg-white rounded-3xl border-4 border-[#6C5CE7] p-4 md:px-8 shadow-[8px_8px_0px_0px_rgba(108,92,231,1)] gap-4">
+        {/* Unified Application Header Bar - Soft gradient style */}
+        <header className="flex flex-col sm:flex-row justify-between items-center bg-white rounded-3xl p-4 md:px-8 shadow-[0_12px_30px_rgba(60,60,100,0.08)] gap-4 border-0">
           <div className="flex items-center gap-3 cursor-pointer" onClick={() => { playSound('popup'); if (profile) { setActiveView('map'); } else { setActiveView('profile-setup'); } }}>
-            <div className="w-12 h-12 bg-[#FF7675] rounded-xl border-2 border-[#2D3436] flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(45,52,54,1)]">
+            <div className="w-12 h-12 bg-gradient-to-br from-[#5b8cff] to-[#7aa8ff] rounded-2xl flex items-center justify-center shadow-[0_8px_20px_rgba(91,140,255,0.25)]">
               <span className="text-2xl animate-bounce-slow">⌨️</span>
             </div>
             <div>
-              <h1 className="text-2xl md:text-3xl font-sans font-black tracking-tight text-[#2D3436] uppercase italic flex items-center gap-1">
-                BÉ TẬP GÕ PHÍM <Sparkles className="w-6 h-6 text-[#F9CA24] fill-[#F9CA24] animate-pulse" />
+              <h1 className="text-2xl md:text-3xl font-sans font-black tracking-tight text-[#35354a] uppercase italic flex items-center gap-1">
+                BÉ TẬP GÕ PHÍM <Sparkles className="w-6 h-6 text-[#5b8cff] fill-[#5b8cff] animate-pulse" />
               </h1>
-              <p className="text-[11px] font-black text-[#A29BFE] uppercase tracking-widest font-mono">ĐÔI TAY VÀNG VIỆT NAM</p>
+              <p className="text-[11px] font-black text-[#8a8aa0] uppercase tracking-widest font-mono">ĐÔI TAY VÀNG VIỆT NAM</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-4 flex-wrap justify-center">
+          <div className="flex items-center gap-3 flex-wrap justify-center">
             <a
               href="https://kideschool.blogspot.com/p/tin-hoc.html"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs font-black border-2 border-[#2D3436] py-2 px-4 rounded-xl bg-[#74B9FF] text-[#2D3436] shadow-[3px_3px_0px_0px_rgba(45,52,54,1)] transition-all hover:translate-y-[-2px] hover:shadow-[5px_5px_0px_0px_rgba(45,52,54,1)] active:translate-y-0 active:shadow-[1px_1px_0px_0px_rgba(45,52,54,1)] flex items-center gap-1.5"
+              className="text-sm font-bold bg-white text-[#35354a] py-3 px-5 rounded-full shadow-[0_8px_20px_rgba(0,0,0,0.06)] transition-all hover:translate-y-[-3px] flex items-center gap-2"
             >
               <Home className="w-4 h-4" /> TRANG CHỦ
             </a>
@@ -182,7 +187,7 @@ export default function App() {
               <button
                 id="header-home-short-btn"
                 onClick={() => { playSound('popup'); setActiveView('map'); }}
-                className="text-xs font-black border-2 border-[#2D3436] py-2 px-4 rounded-xl bg-[#74B9FF] text-[#2D3436] shadow-[3px_3px_0px_0px_rgba(45,52,54,1)] transition-all hover:translate-y-[-2px] hover:shadow-[5px_5px_0px_0px_rgba(45,52,54,1)] active:translate-y-0 active:shadow-[1px_1px_0px_0px_rgba(45,52,54,1)]"
+                className="text-sm font-bold bg-white text-[#35354a] py-3 px-5 rounded-full shadow-[0_8px_20px_rgba(0,0,0,0.06)] transition-all hover:translate-y-[-3px]"
               >
                 🗺️ Bản Đồ Level
               </button>
@@ -194,7 +199,7 @@ export default function App() {
               <button
                 id="app-reset-profile-btn"
                 onClick={handleResetProfile}
-                className="text-[10px] uppercase font-black text-[#2D3436] bg-[#FF7675] border-2 border-[#2D3436] py-2 px-3 rounded-lg shadow-[2px_2px_0px_0px_rgba(45,52,54,1)] transition-all hover:brightness-105 active:scale-95"
+                className="text-[10px] uppercase font-black text-white bg-gradient-to-br from-[#5b8cff] to-[#7aa8ff] py-2 px-4 rounded-full shadow-[0_8px_20px_rgba(91,140,255,0.25)] transition-all hover:translate-y-[-2px] active:translate-y-0"
                 title="Đặt lại gõ phím"
               >
                 Reset
@@ -253,7 +258,7 @@ export default function App() {
         </main>
 
         {/* Footer info badge */}
-        <footer className="text-center text-[11px] text-slate-400 font-medium">
+        <footer className="mt-10 text-center text-[13px] text-[#8a8aa0] font-medium border-t border-dashed border-[rgba(0,0,0,0.08)] pt-5">
           <p>Thiết kế dành riêng cho học sinh & trẻ em Việt Nam rèn luyện tư thế gõ phím chuẩn thế giới.</p>
           <p className="mt-1 font-mono">Vương Quốc Gõ Phím © 2026</p>
         </footer>
