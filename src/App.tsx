@@ -117,8 +117,8 @@ export default function App() {
       newBadges.push('badge-5');
       playSound('badge');
     }
-    // lvl-9 (Bubble race) completed with score > 0 -> badge-6
-    if (completedLevels['lvl-9']?.stars > 0 && !newBadges.includes('badge-6')) {
+    // lvl-10 (Bubble race) completed with score > 0 -> badge-6
+    if (completedLevels['lvl-10']?.stars > 0 && !newBadges.includes('badge-6')) {
       newBadges.push('badge-6');
       playSound('badge');
     }
