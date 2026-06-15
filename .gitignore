@@ -2,18 +2,4 @@
 # Build artifacts
 dist/
 build/
-# Dependencies
-node_modules/
-# Editor/IDE files
-.vscode/
-.idea/
-*.swp
-*.swo
-*.tmp
-# Logs
-*.log
-# Coverage reports
-coverage/
-htmlcov/
-.coverage
 ```
