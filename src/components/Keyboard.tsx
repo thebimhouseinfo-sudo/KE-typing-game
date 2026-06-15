@@ -73,7 +73,7 @@ export default function Keyboard({ targetKey, pressedKey }: KeyboardProps) {
   };
 
   return (
-    <div id="virtual-keyboard" className="bg-slate-100 dark:bg-slate-900 p-4 rounded-3xl border-4 border-slate-300 dark:border-slate-800 shadow-lg space-y-1.5 max-w-4xl mx-auto overflow-x-auto">
+    <div id="virtual-keyboard" className="bg-slate-100 dark:bg-slate-900 p-4 rounded-3xl border-4 border-slate-300 dark:border-slate-800 shadow-lg space-y-1.5 w-full max-w-4xl mx-auto overflow-x-auto">
       {/* Row 1 */}
       <div className="flex justify-center gap-1 min-w-[500px]">
         {numberRow.map(renderKey)}

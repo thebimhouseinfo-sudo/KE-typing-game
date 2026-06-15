@@ -11,6 +11,7 @@ import { playSound } from './utils/audio';
 import { Sparkles, Keyboard, Trophy, Award, Gift, Star, Home } from 'lucide-react';
 
 const LOCAL_STORAGE_KEY = 'be_tap_go_phim_profile';
+const STORAGE_KEY = 'ke_typing_game_progress';
 
 export default function App() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -43,6 +44,38 @@ export default function App() {
       console.warn("Could not load stored profile", e);
       setActiveView('profile-setup');
     }
+  }, []);
+
+  // PostMessage communication with parent Blogger page
+  useEffect(() => {
+    // Listen for messages from the game iframe
+    const handleMessage = (event: MessageEvent) => {
+      // Only process messages from the expected origin
+      if (event.origin !== 'https://thebimhouseinfo-sudo.github.io') return;
+
+      const message = event.data;
+
+      if (message.type === 'GET_PROGRESS') {
+        // Game requests progress data: Read from Blogger's localStorage
+        const savedData = localStorage.getItem(STORAGE_KEY);
+        // Send data back to the iframe
+        event.source?.postMessage({
+          type: 'SEND_PROGRESS',
+          data: savedData ? JSON.parse(savedData) : null
+        }, event.origin);
+      } 
+      else if (message.type === 'SAVE_PROGRESS') {
+        // Game requests to save progress: Store in Blogger's localStorage
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(message.data));
+        console.log('Blogger đã lưu hộ tiến trình thành công!');
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+
+    return () => {
+      window.removeEventListener('message', handleMessage);
+    };
   }, []);
 
   const handleSaveProfile = (name: string, avatar: string, inputMethod: InputMethod) => {
@@ -132,6 +165,12 @@ export default function App() {
 
     setProfile(updatedProfile);
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updatedProfile));
+
+    // Send progress to parent Blogger page via postMessage
+    window.parent.postMessage({
+      type: 'SAVE_PROGRESS',
+      data: updatedProfile
+    }, 'https://thebimhouseinfo-sudo.github.io');
   };
 
   const handleUpdateInputMethod = (inputMethod: InputMethod) => {
@@ -139,6 +178,12 @@ export default function App() {
     const updatedProfile: UserProfile = { ...profile, inputMethod };
     setProfile(updatedProfile);
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updatedProfile));
+
+    // Send progress to parent Blogger page via postMessage
+    window.parent.postMessage({
+      type: 'SAVE_PROGRESS',
+      data: updatedProfile
+    }, 'https://thebimhouseinfo-sudo.github.io');
   };
 
   const handleResetProfile = () => {
@@ -147,6 +192,12 @@ export default function App() {
       setProfile(null);
       setActiveView('profile-setup');
       playSound('wrong');
+
+      // Notify parent Blogger page to clear progress
+      window.parent.postMessage({
+        type: 'SAVE_PROGRESS',
+        data: null
+      }, 'https://thebimhouseinfo-sudo.github.io');
     }
   };
 
