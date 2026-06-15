@@ -992,6 +992,10 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
     }
 
     // STANDARD MODE TYPING PROCESS
+    // For levels 7, 8, 9 (word/sentence mode): check full word match before reporting error
+    // For levels 1-6 (letter mode): check letter by letter
+    const isWordMode = ['lvl-7', 'lvl-8', 'lvl-9'].includes(level.id);
+    
     // Auto-advance if fully matches (case-insensitive to support capitalization leniency)
     const valTrimmed = val.trim();
     const isWordComplete = val.toLowerCase() === targetClean.toLowerCase() || 
@@ -1021,20 +1025,43 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
     }
 
     // Check if the input is a valid substring or ongoing Vietnamese typing sequence
-    const isCorrectSequence = usesVietnameseKeyboard
-      ? isVietnamesePrefixMatch(rawInput, targetClean, profile.inputMethod)
-      : targetClean.toLowerCase().startsWith(val.toLowerCase());
-
-    if (isCorrectSequence) {
-      // Correct typing path
-      setTypedValue(val);
-      updateKeyboardGuide(val, targetClean);
+    // For word mode (levels 7-9), only report error if the full typed word doesn't match at all
+    // For letter mode (levels 1-6), check prefix match letter by letter
+    let shouldReportError = false;
+    
+    if (isWordMode) {
+      // In word mode, only report error if the converted/final word doesn't match the target at all
+      const convertedVal = usesVietnameseKeyboard 
+        ? val.split(' ').map(w => convertWordToVietnamese(w, profile.inputMethod)).join(' ')
+        : val;
+      
+      // Only report error if the typed value is not a prefix of target AND target is not a prefix of typed
+      // This allows users to complete the full word before checking
+      if (convertedVal.length >= targetClean.length) {
+        // User typed as many or more characters than target, check if it matches
+        const isCorrectSequence = usesVietnameseKeyboard
+          ? isVietnamesePrefixMatch(rawInput, targetClean, profile.inputMethod)
+          : targetClean.toLowerCase().startsWith(val.toLowerCase());
+        shouldReportError = !isCorrectSequence;
+      }
+      // If typed value is shorter than target, don't report error yet - let them finish typing
     } else {
+      // Letter mode (levels 1-6): check prefix match for each keystroke
+      const isCorrectSequence = usesVietnameseKeyboard
+        ? isVietnamesePrefixMatch(rawInput, targetClean, profile.inputMethod)
+        : targetClean.toLowerCase().startsWith(val.toLowerCase());
+      shouldReportError = !isCorrectSequence;
+    }
+
+    if (shouldReportError) {
       // Typos occurred!
       playSound('wrong');
       setFeedbackEffect('wrong');
       setErrors(prev => prev + 1);
-      // We still record the typo but don't append to input to encourage correct typing
+    } else {
+      // Correct typing path
+      setTypedValue(val);
+      updateKeyboardGuide(val, targetClean);
     }
   };
 
