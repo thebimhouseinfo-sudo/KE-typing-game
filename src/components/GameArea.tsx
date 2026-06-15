@@ -1388,7 +1388,7 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
                               setTypedValue('');
                               playSound('key-press');
                             }}
-                            placeholder="Nhập vào đây đoạn văn bản em yêu thích để bắt đầu luyện gõ..."
+                            placeholder="Nhập văn bản vào để bắt đầu gõ. Bắt buộc gõ đúng chữ viết thường và viết hoa cùng các dấu câu. Nhấn giữ phím Shift và phím chữ để viết chữ in hoa"
                             className="w-full min-h-[120px] p-4 pb-7 rounded-2xl border-0 bg-[#f4f4f7] text-[#35354a] font-sans text-base font-semibold shadow-[0_12px_30px_rgba(60,60,100,0.08)] focus:shadow-[0_18px_40px_rgba(91,140,255,0.25)] transition-all resize-none placeholder:text-[#8a8aa0] text-center"
                           />
                           <span className="absolute bottom-2.5 right-4 text-[10px] text-[#8a8aa0] font-bold font-mono">
