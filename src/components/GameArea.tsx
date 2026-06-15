@@ -2,9 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Level, UserProfile } from '../types';
 import { KEYBOARD_KEYS } from '../data';
 import { playSound } from '../utils/audio';
+import { useFullScreen } from '../hooks/useFullScreen';
 import Keyboard from './Keyboard';
 import HandsVisualizer from './HandsVisualizer';
-import { Sparkles, Trophy, ArrowLeft, RotateCcw, Volume2, Heart, Award, Star, Zap } from 'lucide-react';
+import { Sparkles, Trophy, ArrowLeft, RotateCcw, Volume2, Heart, Award, Star, Zap, Maximize2 } from 'lucide-react';
 import typingBanner from '../assets/images/typing_banner_1780053365877.png';
 
 interface GameAreaProps {
@@ -574,9 +575,18 @@ function getNextKeyForVietnamese(inputChar: string, targetChar: string, method?:
 }
 
 export default function GameArea({ level, profile, onFinish, onBack, onUpdateInputMethod }: GameAreaProps) {
+  const { enterFullscreen, exitFullscreen } = useFullScreen();
   const [isPlaying, setIsPlaying] = useState(true);
   const [showResults, setShowResults] = useState(false);
   const [showHandOverlay, setShowHandOverlay] = useState(false);
+  
+  // Auto-enter fullscreen when game starts
+  useEffect(() => {
+    enterFullscreen();
+    return () => {
+      exitFullscreen();
+    };
+  }, []);
   
   // Game metrics
   const [typedValue, setTypedValue] = useState('');
@@ -1042,6 +1052,11 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
 
     setShowResults(true);
     onFinish(earnedStars, score, finalWpm, finalAccuracy);
+    
+    // Exit fullscreen when results are shown
+    setTimeout(() => {
+      exitFullscreen();
+    }, 500);
   };
 
   const handleRestart = () => {
@@ -1081,52 +1096,52 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
   return (
     <div id="game-arena-container" className="space-y-6 text-[#2D3436]">
       {/* Top Header Controls / Metrics Bar */}
-      <div className="bg-[#FFFDF6] rounded-2xl border-4 border-[#2D3436] p-4 flex justify-between items-center gap-4 flex-wrap shadow-[4px_4px_0px_0px_rgba(45,52,54,1)]">
+      <div className="bg-white rounded-3xl border-none p-4 flex justify-between items-center gap-4 flex-wrap shadow-[0_12px_30px_rgba(60,60,100,0.08)]">
         <button
           id="back-to-map-btn"
           onClick={onBack}
-          className="flex items-center gap-1.5 bg-[#FAB1A0] text-[#2D3436] font-black uppercase text-xs border-2 border-[#2D3436] py-1.5 px-3 rounded-lg transition-all hover:translate-y-[-1px] hover:shadow-[2px_2px_0px_0px_rgba(45,52,54,1)] active:translate-y-0"
+          className="flex items-center gap-1.5 bg-gradient-to-r from-[#5b8cff] to-[#7aa8ff] text-white font-bold text-sm px-4 py-2.5 rounded-full transition-all hover:translate-y-[-2px] hover:shadow-[0_8px_20px_rgba(91,140,255,0.3)] active:translate-y-0"
         >
-          <ArrowLeft className="w-4 h-4" /> TRỞ VỀ BẢN ĐỒ
+          <ArrowLeft className="w-4 h-4" /> TRỞ VỀ
         </button>
 
         <div className="flex items-center gap-2">
-          <span className="text-3xl bg-white border-2 border-[#2D3436] p-1 rounded-lg shadow-[2px_2px_0px_0px_rgba(45,52,54,1)]">{level.icon}</span>
+          <span className="text-3xl bg-white rounded-2xl p-1 shadow-[0_8px_20px_rgba(0,0,0,0.06)]">{level.icon}</span>
           <div>
-            <span className="text-[10px] uppercase font-black text-[#A29BFE]">Đang luyện gõ</span>
-            <h3 className="font-sans font-black text-[#2D3436] leading-tight text-sm uppercase tracking-tight">{level.name}</h3>
+            <span className="text-[10px] uppercase font-bold text-[#8a8aa0]">Đang luyện gõ</span>
+            <h3 className="font-sans font-black text-[#35354a] leading-tight text-sm uppercase tracking-tight">{level.name}</h3>
           </div>
         </div>
 
         {/* Live score metrics */}
-        <div className="flex items-center gap-4">
-          <div className="text-center bg-[#FFEAA7] border-2 border-[#2D3436] px-3 py-1 rounded-xl shadow-[2px_2px_0px_0px_rgba(45,52,54,1)]">
-            <div className="text-[9px] text-slate-700 font-extrabold uppercase">ĐIỂM</div>
-            <div className="text-base font-black text-[#2D3436] font-mono flex items-center justify-center gap-1">
-              <Sparkles className="w-3.5 h-3.5 text-yellow-600 fill-yellow-500" /> {score}
+        <div className="flex items-center gap-3">
+          <div className="text-center bg-white px-4 py-2 rounded-2xl shadow-[0_8px_20px_rgba(0,0,0,0.06)]">
+            <div className="text-[9px] text-[#8a8aa0] font-bold uppercase">ĐIỂM</div>
+            <div className="text-lg font-black text-[#35354a] font-mono flex items-center justify-center gap-1">
+              <Sparkles className="w-3.5 h-3.5 text-[#5b8cff] fill-[#5b8cff]" /> {score}
             </div>
           </div>
 
           {level.id === 'lvl-10' ? (
-            <div className="text-center bg-[#FF7675] border-2 border-[#2D3436] px-3 py-1 rounded-xl shadow-[2px_2px_0px_0px_rgba(45,52,54,1)]">
-              <div className="text-[9px] text-slate-800 font-extrabold uppercase">MẠNG SỐNG</div>
+            <div className="text-center bg-white px-4 py-2 rounded-2xl shadow-[0_8px_20px_rgba(0,0,0,0.06)]">
+              <div className="text-[9px] text-[#8a8aa0] font-bold uppercase">MẠNG SỐNG</div>
               <div className="flex gap-0.5 justify-center mt-0.5">
                 {[1, 2, 3, 4, 5].map((heartIdx) => (
                   <Heart
                     key={heartIdx}
                     className={`w-3.5 h-3.5 ${
                       heartIdx <= lives
-                        ? 'text-white fill-white animate-pulse'
-                        : 'text-[#2D3436]/30'
+                        ? 'text-[#ff7675] fill-[#ff7675]'
+                        : 'text-gray-300'
                     }`}
                   />
                 ))}
               </div>
             </div>
           ) : (
-            <div className="text-center bg-[#55EFC4] border-2 border-[#2D3436] px-3 py-1 rounded-xl shadow-[2px_2px_0px_0px_rgba(45,52,54,1)]">
-              <div className="text-[9px] text-slate-800 font-extrabold uppercase">TIẾN TRÌNH</div>
-              <div className="text-xs font-black text-[#2D3436]">
+            <div className="text-center bg-white px-4 py-2 rounded-2xl shadow-[0_8px_20px_rgba(0,0,0,0.06)]">
+              <div className="text-[9px] text-[#8a8aa0] font-bold uppercase">TIẾN TRÌNH</div>
+              <div className="text-sm font-black text-[#35354a]">
                 ⭐ {currentIndex + 1} / {targetItems.length}
               </div>
             </div>
@@ -1135,18 +1150,20 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
           <button
             id="toggle-hand-overlay-btn"
             onClick={() => { playSound('popup'); setShowHandOverlay(!showHandOverlay); }}
-            className={`flex items-center gap-1.5 font-black uppercase text-xs border-2 border-[#2D3436] py-1.5 px-3 rounded-lg transition-all hover:translate-y-[-1px] hover:shadow-[2px_2px_0px_0px_rgba(45,52,54,1)] active:translate-y-0 ${
-              showHandOverlay ? 'bg-[#55EFC4] shadow-[2px_2px_0px_0px_rgba(45,52,54,1)]' : 'bg-[#FFEAA7]'
+            className={`flex items-center gap-1.5 font-bold text-xs px-3 py-2 rounded-full transition-all hover:translate-y-[-2px] ${
+              showHandOverlay 
+                ? 'bg-gradient-to-r from-[#5b8cff] to-[#7aa8ff] text-white shadow-[0_8px_20px_rgba(91,140,255,0.3)]' 
+                : 'bg-white text-[#35354a] shadow-[0_8px_20px_rgba(0,0,0,0.06)]'
             }`}
             title="Xem cách đặt tay"
           >
-            👐 ĐẶT TAY
+            👐 TAY
           </button>
 
           <button
             id="restart-level-btn"
             onClick={handleRestart}
-            className="p-2 rounded-xl bg-white border-2 border-[#2D3436] text-[#2D3436] hover:bg-[#FFEAA7] active:scale-95 transition-colors shadow-[2px_2px_0px_0px_rgba(45,52,54,1)]"
+            className="p-2.5 rounded-full bg-white text-[#35354a] hover:bg-[#f4f4f7] active:scale-95 transition-colors shadow-[0_8px_20px_rgba(0,0,0,0.06)]"
             title="Gõ Thử Lại"
           >
             <RotateCcw className="w-4 h-4" />
@@ -1996,15 +2013,15 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
         </div>
       ) : (
         /* GAME OVER / RESULTS PRESENTATION CARD */
-        <div id="game-results-panel" className="max-w-xl mx-auto bg-[#FFFDF6] rounded-3xl border-4 border-[#2D3436] shadow-[8px_8px_0px_0px_rgba(45,52,54,1)] p-8 text-center animate-scale-up space-y-6">
+        <div id="game-results-panel" className="max-w-xl mx-auto bg-white rounded-3xl border-none p-8 text-center animate-scale-up space-y-6 shadow-[0_18px_40px_rgba(91,140,255,0.25)]">
           <div className="space-y-2">
             <span className="text-6xl inline-block animate-bounce mb-2">
               {stars > 0 ? '🏆' : '😿'}
             </span>
-            <h2 className="text-3xl font-sans font-black text-[#2D3436] uppercase italic tracking-tight">
+            <h2 className="text-3xl font-sans font-black text-[#35354a] uppercase italic tracking-tight">
               {stars > 0 ? 'CẤP ĐỘ HOÀN THÀNH!' : 'BÉ GẦN LÀM ĐƯỢC RỒI!'}
             </h2>
-            <p className="text-slate-600 font-bold">
+            <p className="text-[#8a8aa0] font-bold">
               {stars > 0 ? 'Dưới đây là điểm học gõ siêu tốc của bé:' : 'Đừng nản lòng bé nhé, tay gõ phím nhiều sẽ quen ngay!'}
             </p>
           </div>
@@ -2016,8 +2033,8 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
                 key={starIdx}
                 className={`w-14 h-14 ${
                   starIdx <= stars
-                    ? 'text-[#FDCB6E] fill-[#FDCB6E] scale-110 drop-shadow-md'
-                    : 'text-slate-200'
+                    ? 'text-[#5b8cff] fill-[#5b8cff] scale-110 drop-shadow-md'
+                    : 'text-gray-200'
                 } transition-all duration-500`}
               />
             ))}
@@ -2025,32 +2042,32 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
 
           {/* Grid Stats */}
           <div className="grid grid-cols-3 gap-4 pt-4">
-            <div className="bg-[#FFEAA7] p-4 rounded-2xl border-2 border-[#2D3436] shadow-[2px_2px_0px_0px_rgba(45,52,54,1)]">
-              <Zap className="w-6 h-6 text-[#2D3436] mx-auto mb-1 animate-pulse" />
-              <div className="text-2xl font-black text-[#2D3436] font-mono">{score}</div>
-              <div className="text-[10px] text-[#2D3436] font-black uppercase mt-0.5">TỔNG ĐIỂM</div>
+            <div className="bg-white p-4 rounded-2xl shadow-[0_12px_30px_rgba(60,60,100,0.08)]">
+              <Zap className="w-6 h-6 text-[#5b8cff] mx-auto mb-1 animate-pulse" />
+              <div className="text-2xl font-black text-[#35354a] font-mono">{score}</div>
+              <div className="text-[10px] text-[#8a8aa0] font-bold uppercase mt-0.5">TỔNG ĐIỂM</div>
             </div>
             
-            <div className="bg-[#55EFC4] p-4 rounded-2xl border-2 border-[#2D3436] shadow-[2px_2px_0px_0px_rgba(45,52,54,1)]">
-              <Sparkles className="w-6 h-6 text-[#2D3436] mx-auto mb-1" />
-              <div className="text-2xl font-black text-[#2D3436] font-mono">{wpm}</div>
-              <div className="text-[10px] text-[#2D3436] font-black uppercase mt-0.5">Tốc Độ (WPM)</div>
+            <div className="bg-white p-4 rounded-2xl shadow-[0_12px_30px_rgba(60,60,100,0.08)]">
+              <Sparkles className="w-6 h-6 text-[#7aa8ff] mx-auto mb-1" />
+              <div className="text-2xl font-black text-[#35354a] font-mono">{wpm}</div>
+              <div className="text-[10px] text-[#8a8aa0] font-bold uppercase mt-0.5">Tốc Độ (WPM)</div>
             </div>
 
-            <div className="bg-[#FF7675] p-4 rounded-2xl border-2 border-[#2D3436] shadow-[2px_2px_0px_0px_rgba(45,52,54,1)]">
-              <Award className="w-6 h-6 text-[#2D3436] mx-auto mb-1" />
-              <div className="text-2xl font-black text-[#2D3436] font-mono">{accuracy}%</div>
-              <div className="text-[10px] text-[#2D3436] font-black uppercase mt-0.5">Chính Xác</div>
+            <div className="bg-white p-4 rounded-2xl shadow-[0_12px_30px_rgba(60,60,100,0.08)]">
+              <Award className="w-6 h-6 text-[#5b8cff] mx-auto mb-1" />
+              <div className="text-2xl font-black text-[#35354a] font-mono">{accuracy}%</div>
+              <div className="text-[10px] text-[#8a8aa0] font-bold uppercase mt-0.5">Chính Xác</div>
             </div>
           </div>
 
           {/* Mini level reward message */}
           {stars >= 2 && level.badgeToUnlock && (
-            <div className="p-4 bg-white border-4 border-dashed border-[#2D3436] rounded-2xl flex items-center justify-center gap-2.5 text-left">
+            <div className="p-4 bg-gradient-to-r from-[#eef7ff] to-[#f8fcff] border-2 border-dashed border-[#5b8cff]/30 rounded-2xl flex items-center justify-center gap-2.5 text-left">
               <span className="text-3xl">🎁</span>
               <div>
-                <h5 className="font-black text-[#2D3436] text-sm uppercase">BÉ ĐƯỢC MỞ KHÓA HUY HIỆU MỚI!</h5>
-                <p className="text-xs font-semibold text-slate-700">Vào bộ sưu tập danh dự để kiểm tra nhé!</p>
+                <h5 className="font-black text-[#35354a] text-sm uppercase">BÉ ĐƯỢC MỞ KHÓA HUY HIỆU MỚI!</h5>
+                <p className="text-xs font-semibold text-[#8a8aa0]">Vào bộ sưu tập danh dự để kiểm tra nhé!</p>
               </div>
             </div>
           )}
@@ -2060,16 +2077,16 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
             <button
               id="results-restart-btn"
               onClick={handleRestart}
-              className="flex-1 bg-[#55EFC4] text-[#2D3436] font-sans font-black text-lg py-3.5 px-6 rounded-2xl border-2 border-[#2D3436] shadow-[4px_4px_0px_0px_rgba(45,52,54,1)] transition-all flex items-center justify-center gap-1.5 hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(45,52,54,1)] active:translate-y-0 active:shadow-[1px_1px_0px_0px_rgba(45,52,54,1)]"
+              className="flex-1 bg-gradient-to-r from-[#5b8cff] to-[#7aa8ff] text-white font-bold text-lg py-3.5 px-6 rounded-full shadow-[0_12px_30px_rgba(91,140,255,0.3)] transition-all flex items-center justify-center gap-1.5 hover:translate-y-[-2px] hover:shadow-[0_18px_40px_rgba(91,140,255,0.4)] active:translate-y-0"
             >
-              <RotateCcw className="w-5 h-5" /> LUYỆN LẠI CẤP ĐỘ
+              <RotateCcw className="w-5 h-5" /> LUYỆN LẠI
             </button>
             <button
               id="results-back-btn"
               onClick={onBack}
-              className="flex-1 bg-white hover:bg-slate-50 text-[#2D3436] font-sans font-black text-lg py-3.5 px-6 rounded-2xl border-2 border-[#2D3436] transition-all text-center"
+              className="flex-1 bg-white text-[#35354a] font-bold text-lg py-3.5 px-6 rounded-full shadow-[0_8px_20px_rgba(0,0,0,0.06)] transition-all hover:bg-[#f4f4f7] text-center"
             >
-              Trở Về Bản Đồ
+              Trở Về
             </button>
           </div>
         </div>
