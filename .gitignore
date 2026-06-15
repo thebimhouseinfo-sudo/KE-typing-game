@@ -1,59 +1,59 @@
 ```
-# Dependencies
-node_modules/
+# Logs and temp files
+*.log
+*.tmp
+*.swp
 
-# Build outputs
-dist/
-build/
-*.tsbuildinfo
-
-# Environment variables
+# Environment
 .env
 .env.local
-*.env.*
+.env.*
 
-# IDE specific
+# Editors
 .vscode/
 .idea/
-*.swp
-*.swo
 
-# Logs
-*.log
+# Dependencies
+node_modules/
+venv/
+.venv/
+__pycache__/
+.mypy_cache/
+.pytest_cache/
+dist/
+build/
+target/
+.gradle/
 
-# Temporary files
-*.tmp
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Compiled files
+*.pyc
+*.class
+*.o
+*.exe
+*.dll
+*.so
+*.a
+*.obj
+*.out
 
 # Coverage reports
 coverage/
 htmlcov/
-*.coverage
+.coverage
 
-# Python specific (if applicable)
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-.Python
-env/
-venv/
-.venv/
-pip-log.txt
-pip-delete-this-directory.txt
-.pytest_cache/
-.mypy_cache/
-.tox/
-
-# Compressed archives
+# Compressed files
 *.zip
-*.tar.gz
-*.tar.bz2
-*.tar.xz
 *.gz
-*.rar
-*.7z
+*.tar
+*.tgz
 *.bz2
 *.xz
+*.7z
+*.rar
 *.zst
 *.lz4
 *.lzh
@@ -64,4 +64,8 @@ pip-delete-this-directory.txt
 *.Z
 *.lz
 *.lzo
+*.tar.gz
+*.tar.bz2
+*.tar.xz
+*.tar.zst
 ```
