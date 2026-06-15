@@ -651,7 +651,7 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
 
   // Split text into sentences (ending with . ? ! or newline)
   const getSentences = (text: string): string[] => {
-    return text.split(/(?<=[.!?])\s+|\n+/).filter(s => s.trim().length > 0);
+    return text.split(/(?<=[.!?])\s+|\n+/).map(s => s.trim()).filter(s => s.length > 0);
   };
 
   // Get current raw items - For lvl-9, use sentences if in typing mode
@@ -1539,13 +1539,15 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
                   👉 Bấm vào đây nếu không gõ được chữ bé nhé!
                 </button>
               </div>
+
+              {/* Live Keyboard display - merged into the same card */}
+              <div className="pt-5 mt-2 border-t-2 border-dashed border-[#e8e8ed]">
+                <Keyboard targetKey={targetPhysKey} pressedKey={pressedKey} />
+              </div>
             </div>
 
-            {/* Live Keyboard display */}
-            <Keyboard targetKey={targetPhysKey} pressedKey={pressedKey} />
-
-            {/* Horizontal Finger Guide (HandsVisualizer) now placed beautifully under the keyboard */}
-            <div className="mt-5">
+            {/* Horizontal Finger Guide (HandsVisualizer) placed beautifully below the main card */}
+            <div className="mt-0">
               <HandsVisualizer activeFinger={currentFinger} />
             </div>
 
