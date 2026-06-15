@@ -122,10 +122,10 @@ export default function ProfileSetup({ onSave, initialName = '', initialAvatar =
                 key={avatar}
                 type="button"
                 onClick={() => handleAvatarSelect(avatar)}
-                className={`p-4 rounded-2xl transition-all duration-300 transform active:scale-95 flex items-center justify-center ${
+                className={`p-4 rounded-[22px] transition-all duration-250 transform active:scale-95 flex items-center justify-center ${
                   selectedAvatar === avatar
                     ? 'bg-gradient-to-br from-[#5b8cff] to-[#7aa8ff] scale-105 shadow-[0_12px_30px_rgba(91,140,255,0.25)]'
-                    : 'bg-[#f4f4f7] hover:bg-[#e8e8ed] hover:scale-105'
+                    : 'bg-white hover:bg-[#f8fcff] hover:translate-y-[-3px] shadow-[0_12px_30px_rgba(60,60,100,0.08)] hover:shadow-[0_18px_40px_rgba(60,60,100,0.12)]'
                 }`}
               >
                 <Avatar avatar={avatar} className="w-14 h-14" />
@@ -143,10 +143,10 @@ export default function ProfileSetup({ onSave, initialName = '', initialAvatar =
             <button
               type="button"
               onClick={() => handleMethodSelect('telex')}
-              className={`p-5 rounded-2xl text-left transition-all duration-200 ${
+              className={`p-5 rounded-[30px] text-left transition-all duration-250 ${
                 inputMethod === 'telex'
                   ? 'bg-gradient-to-br from-[#5b8cff] to-[#7aa8ff] shadow-[0_12px_30px_rgba(91,140,255,0.25)] text-white'
-                  : 'bg-[#f4f4f7] hover:bg-[#e8e8ed]'
+                  : 'bg-white hover:bg-[#f8fcff] hover:translate-y-[-3px] shadow-[0_12px_30px_rgba(60,60,100,0.08)] hover:shadow-[0_18px_40px_rgba(60,60,100,0.12)]'
               }`}
             >
               <div className="flex justify-between items-center mb-2">
@@ -161,10 +161,10 @@ export default function ProfileSetup({ onSave, initialName = '', initialAvatar =
             <button
               type="button"
               onClick={() => handleMethodSelect('vni')}
-              className={`p-5 rounded-2xl text-left transition-all duration-200 ${
+              className={`p-5 rounded-[30px] text-left transition-all duration-250 ${
                 inputMethod === 'vni'
                   ? 'bg-gradient-to-br from-[#5b8cff] to-[#7aa8ff] shadow-[0_12px_30px_rgba(91,140,255,0.25)] text-white'
-                  : 'bg-[#f4f4f7] hover:bg-[#e8e8ed]'
+                  : 'bg-white hover:bg-[#f8fcff] hover:translate-y-[-3px] shadow-[0_12px_30px_rgba(60,60,100,0.08)] hover:shadow-[0_18px_40px_rgba(60,60,100,0.12)]'
               }`}
             >
               <div className="flex justify-between items-center mb-2">
