@@ -8,7 +8,7 @@ import Leaderboard from './components/Leaderboard';
 import Rewards from './components/Rewards';
 import SoundToggle from './components/SoundToggle';
 import { playSound } from './utils/audio';
-import { Sparkles, Keyboard, Trophy, Award, Gift, Star } from 'lucide-react';
+import { Sparkles, Keyboard, Trophy, Award, Gift, Star, Home } from 'lucide-react';
 
 const LOCAL_STORAGE_KEY = 'be_tap_go_phim_profile';
 
@@ -169,6 +169,15 @@ export default function App() {
           </div>
 
           <div className="flex items-center gap-4 flex-wrap justify-center">
+            <a
+              href="https://kideschool.blogspot.com/p/tin-hoc.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs font-black border-2 border-[#2D3436] py-2 px-4 rounded-xl bg-[#74B9FF] text-[#2D3436] shadow-[3px_3px_0px_0px_rgba(45,52,54,1)] transition-all hover:translate-y-[-2px] hover:shadow-[5px_5px_0px_0px_rgba(45,52,54,1)] active:translate-y-0 active:shadow-[1px_1px_0px_0px_rgba(45,52,54,1)] flex items-center gap-1.5"
+            >
+              <Home className="w-4 h-4" /> TRANG CHỦ
+            </a>
+            
             {profile && activeView !== 'map' && activeView !== 'profile-setup' && (
               <button
                 id="header-home-short-btn"
