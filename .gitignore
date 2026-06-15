@@ -2,70 +2,18 @@
 # Build artifacts
 dist/
 build/
-
 # Dependencies
 node_modules/
-
-# Environment
-.env
-.env.local
-*.env.*
-
-# Editors
+# Editor/IDE files
 .vscode/
 .idea/
-
+*.swp
+*.swo
+*.tmp
 # Logs
 *.log
-
-# Python
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-
-# Compiled files
-*.o
-*.obj
-*.so
-*.a
-*.dll
-*.exe
-*.out
-
-# Compression
-*.zip
-*.gz
-*.tar
-*.tgz
-*.bz2
-*.xz
-*.7z
-*.rar
-*.zst
-*.lz4
-*.lzh
-*.cab
-*.arj
-*.rpm
-*.deb
-*.Z
-*.lz
-*.lzo
-
-# System
-.DS_Store
-Thumbs.db
-
-# Testing
-.coverage
+# Coverage reports
 coverage/
 htmlcov/
-
-# Caches
-.mypy_cache/
-.pytest_cache/
-.cache/
-target/
-.gradle/
+.coverage
 ```

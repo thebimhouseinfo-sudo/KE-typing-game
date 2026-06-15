@@ -89,6 +89,13 @@ export default function MapSelection({
     if (idx === 0) return true;
     const prevLvl = LEVELS[idx - 1];
     const prevStats = (profile.completedLevels || {})[prevLvl.id];
+    
+    // Special case: levels 9 and 10 are both unlocked after completing level 8
+    if (lvl.id === 'lvl-9' || lvl.id === 'lvl-10') {
+      const lvl8Stats = (profile.completedLevels || {})['lvl-8'];
+      return lvl8Stats && lvl8Stats.stars > 0;
+    }
+    
     return prevStats && prevStats.stars > 0;
   };
 
