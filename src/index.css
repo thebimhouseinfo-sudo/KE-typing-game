@@ -23,6 +23,10 @@
   --island-2: #7DC7FF;
   --island-3: #9BE38F;
   --island-4: #C79CFF;
+  
+  /* Keyboard brand colors - orange gradient */
+  --keyboard-1: #ffb020;
+  --keyboard-2: #ff8c00;
 }
 
 /* Custom background gradient */
