@@ -5,7 +5,7 @@ import { playSound } from '../utils/audio';
 import { useFullScreen } from '../hooks/useFullScreen';
 import Keyboard from './Keyboard';
 import HandsVisualizer from './HandsVisualizer';
-import { Sparkles, Trophy, ArrowLeft, RotateCcw, Volume2, Heart, Award, Star, Zap } from 'lucide-react';
+import { Sparkles, Trophy, ArrowLeft, RotateCcw, Volume2, Heart, Award, Star, Zap, PartyPopper, Home, Rocket, Compass, Puzzle, Wand2, BookOpen, MessageSquareText, Keyboard as KeyboardIcon, Waves } from 'lucide-react';
 
 interface GameAreaProps {
   level: Level;
@@ -578,6 +578,22 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
   const [isPlaying, setIsPlaying] = useState(true);
   const [showResults, setShowResults] = useState(false);
   const [showHandOverlay, setShowHandOverlay] = useState(false);
+  
+  // Map icon string IDs to Lucide React components
+  const LEVEL_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
+    'party-popper': PartyPopper,
+    'home': Home,
+    'rocket': Rocket,
+    'compass': Compass,
+    'puzzle': Puzzle,
+    'wand-2': Wand2,
+    'book-open': BookOpen,
+    'message-square-text': MessageSquareText,
+    'keyboard': KeyboardIcon,
+    'waves': Waves
+  };
+  
+  const LevelIcon = LEVEL_ICONS[level.icon as keyof typeof LEVEL_ICONS];
   
   // Auto-enter fullscreen when game starts
   useEffect(() => {
@@ -1169,7 +1185,9 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
         </button>
 
         <div className="flex items-center gap-2">
-          <span className="text-3xl bg-white rounded-2xl p-1 shadow-[0_8px_20px_rgba(0,0,0,0.06)]">{level.icon}</span>
+          <div className="bg-white rounded-2xl p-2 shadow-[0_8px_20px_rgba(0,0,0,0.06)]">
+            {LevelIcon && <LevelIcon className="w-8 h-8 text-[#ffb400]" />}
+          </div>
           <div>
             <span className="text-[10px] uppercase font-bold text-[#8a8aa0]">Đang luyện gõ</span>
             <h3 className="font-sans font-black text-[#35354a] leading-tight text-sm uppercase tracking-tight">{level.name}</h3>
