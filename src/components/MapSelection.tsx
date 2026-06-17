@@ -2,8 +2,22 @@ import React from 'react';
 import { Level, UserProfile, Badge } from '../types';
 import { LEVELS, LEVEL_CATEGORIES, BADGES } from '../data';
 import { playSound } from '../utils/audio';
-import { Award, Trophy, User, Calendar, Flame, Lock, CheckCircle2, ChevronRight, Sparkles, Star } from 'lucide-react';
+import { Award, Trophy, User, Calendar, Flame, Lock, CheckCircle2, ChevronRight, Sparkles, Star, PartyPopper, Home, Rocket, Compass, Puzzle, Wand2, BookOpen, MessageSquareText, Keyboard, Waves } from 'lucide-react';
 import Avatar from './Avatar';
+
+// Map icon string IDs to Lucide React components
+const LEVEL_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
+  'party-popper': PartyPopper,
+  'home': Home,
+  'rocket': Rocket,
+  'compass': Compass,
+  'puzzle': Puzzle,
+  'wand-2': Wand2,
+  'book-open': BookOpen,
+  'message-square-text': MessageSquareText,
+  'keyboard': Keyboard,
+  'waves': Waves
+};
 
 interface MapSelectionProps {
   profile: UserProfile;
@@ -27,8 +41,8 @@ const MAP_THEMES: Record<string, { title: string; desc: string; bannerBg: string
     bgGradient: 'from-[#F0F8FF] to-[#E0F2FF]'
   },
   'vietnamese': {
-    title: '🇻🇳 Đảo 3 - Tiếng Việt',
-    desc: 'Luyện gõ tiếng Việt từ ký tự, đến từ và câu hoàn chỉnh. Bé sẽ thành thạo gõ các chữ cái có dấu và câu tiếng Việt.',
+    title: '🪄 Đảo 3 - Xứ Sở Phù Thủy Tiếng Việt',
+    desc: 'Bước vào thế giới phép thuật của các dấu tiếng Việt! Bé sẽ học cách dùng đũa thần gõ phím để tạo ra những ký tự diệu kỳ, ghép từ thần tiên và kể chuyện cổ tích.',
     bannerBg: 'bg-[#9BE38F]',
     bgGradient: 'from-[#F0FFF0] to-[#E0FFE0]'
   },
@@ -252,9 +266,18 @@ export default function MapSelection({
 
                   <div className="flex items-start justify-between gap-3 pt-4">
                     <div className="flex items-center gap-3">
-                      <span className={`text-4xl p-2 rounded-2xl bg-gradient-to-br ${level.bgGradient} text-white shadow-[0_8px_20px_rgba(91,140,255,0.25)]`}>
-                        {level.icon}
-                      </span>
+                      {(() => {
+                        const IconComponent = LEVEL_ICONS[level.icon];
+                        return IconComponent ? (
+                          <div className={`p-2 rounded-2xl bg-gradient-to-br ${level.bgGradient} text-white shadow-[0_8px_20px_rgba(91,140,255,0.25)]`}>
+                            <IconComponent className="w-8 h-8" />
+                          </div>
+                        ) : (
+                          <span className="text-4xl p-2 rounded-2xl bg-gradient-to-br ${level.bgGradient} text-white shadow-[0_8px_20px_rgba(91,140,255,0.25)]">
+                            {level.icon}
+                          </span>
+                        );
+                      })()}
                       <div>
                         <span className="text-xs font-black text-[#8a8aa0] uppercase tracking-wider font-mono">
                           BÀI HỌC {originalIdx + 1}

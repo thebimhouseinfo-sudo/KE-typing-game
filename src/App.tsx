@@ -6,16 +6,17 @@ import MapSelection from './components/MapSelection';
 import GameArea from './components/GameArea';
 import Leaderboard from './components/Leaderboard';
 import Rewards from './components/Rewards';
+import SettingsPanel from './components/SettingsPanel';
 import SoundToggle from './components/SoundToggle';
 import { playSound } from './utils/audio';
-import { Sparkles, Keyboard, Trophy, Award, Gift, Star, Home } from 'lucide-react';
+import { Sparkles, Keyboard, Trophy, Award, Gift, Star, Home, Settings } from 'lucide-react';
 
 const LOCAL_STORAGE_KEY = 'be_tap_go_phim_profile';
 const STORAGE_KEY = 'ke_typing_game_progress';
 
 export default function App() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [activeView, setActiveView] = useState<'profile-setup' | 'map' | 'game' | 'leaderboard' | 'rewards'>('map');
+  const [activeView, setActiveView] = useState<'profile-setup' | 'map' | 'game' | 'leaderboard' | 'rewards' | 'settings'>('map');
   const [selectedLevel, setSelectedLevel] = useState<Level | null>(null);
 
   // Load profile from localStorage on boot
@@ -213,12 +214,12 @@ export default function App() {
         {/* Unified Application Header Bar - Soft gradient style */}
         <header className="flex flex-col sm:flex-row justify-between items-center bg-white rounded-3xl p-4 md:px-8 shadow-[0_12px_30px_rgba(60,60,100,0.08)] gap-4 border-0">
           <div className="flex items-center gap-3 cursor-pointer" onClick={() => { playSound('popup'); if (profile) { setActiveView('map'); } else { setActiveView('profile-setup'); } }}>
-            <div className="w-12 h-12 bg-gradient-to-br from-[#5b8cff] to-[#7aa8ff] rounded-2xl flex items-center justify-center shadow-[0_8px_20px_rgba(91,140,255,0.25)]">
+            <div className="w-12 h-12 bg-gradient-to-br from-[#ffb020] to-[#ff8c00] rounded-2xl flex items-center justify-center shadow-[0_8px_20px_rgba(255,140,0,0.25)]">
               <span className="text-2xl animate-bounce-slow">⌨️</span>
             </div>
             <div>
               <h1 className="text-2xl md:text-3xl font-sans font-black tracking-tight text-[#35354a] uppercase italic flex items-center gap-1">
-                BÉ TẬP GÕ PHÍM <Sparkles className="w-6 h-6 text-[#5b8cff] fill-[#5b8cff] animate-pulse" />
+                BÉ TẬP GÕ PHÍM <Sparkles className="w-6 h-6 text-[#ffb020] fill-[#ffb020] animate-pulse" />
               </h1>
             </div>
           </div>
@@ -247,12 +248,12 @@ export default function App() {
 
             {profile && (
               <button
-                id="app-reset-profile-btn"
-                onClick={handleResetProfile}
-                className="text-[10px] uppercase font-black text-white bg-gradient-to-br from-[#5b8cff] to-[#7aa8ff] py-2 px-4 rounded-full shadow-[0_8px_20px_rgba(91,140,255,0.25)] transition-all hover:translate-y-[-2px] active:translate-y-0"
-                title="Đặt lại gõ phím"
+                id="app-settings-btn"
+                onClick={() => { playSound('popup'); setActiveView('settings'); }}
+                className="p-3 rounded-full border-2 bg-white border-[#5b8cff] text-[#5b8cff] hover:bg-[#f0f7ff] transition-all duration-300 transform active:scale-95 shadow-md flex items-center justify-center"
+                title="Cài đặt"
               >
-                Reset
+                <Settings className="w-6 h-6" />
               </button>
             )}
           </div>
@@ -303,6 +304,27 @@ export default function App() {
             <Rewards
               profile={profile}
               onBack={() => setActiveView('map')}
+            />
+          )}
+
+          {activeView === 'settings' && profile && (
+            <SettingsPanel
+              profile={profile}
+              onBack={() => setActiveView('map')}
+              onResetProfile={handleResetProfile}
+              onSaveProfile={(updatedProfile: UserProfile) => {
+                setProfile(updatedProfile);
+                localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updatedProfile));
+                
+                // Send progress to parent Blogger page via postMessage
+                window.parent.postMessage({
+                  type: 'SAVE_PROGRESS',
+                  data: updatedProfile
+                }, 'https://thebimhouseinfo-sudo.github.io');
+                
+                playSound('correct');
+                setActiveView('map');
+              }}
             />
           )}
         </main>

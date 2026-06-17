@@ -10,36 +10,36 @@ export const LEVEL_CATEGORIES = {
 export const LEVELS: Level[] = [
   {
     id: 'lvl-1',
-    name: 'Khởi đầu vui vẻ 🌟',
+    name: 'Khởi đầu vui vẻ',
     description: 'Tập gõ các phím cơ sở bên tay trái và phải: F, J, D, K',
     category: 'home-row',
     targetItems: ['f', 'j', 'd', 'k', 'fd', 'jk', 'df', 'kj', 'fjd', 'kjd', 'ffjj', 'ddkk', 'fjdk', 'kdjf'],
-    icon: '👶',
-    bgGradient: 'from-pink-400 to-orange-400',
+    icon: 'party-popper',
+    bgGradient: 'from-[#F8D77A] to-[#FFD966]',
     badgeToUnlock: 'badge-1'
   },
   {
     id: 'lvl-2',
-    name: 'Hàng phím cơ sở thần kỳ ✨',
+    name: 'Hàng phím cơ sở thần kỳ',
     description: 'Luyện tập đầy đủ hàng phím cơ sở: A, S, D, F, J, K, L, Semicolon (;)',
     category: 'home-row',
     targetItems: ['a', 's', 'd', 'f', 'j', 'k', 'l', 'asdf', 'jkl;', 'as', 'df', 'jk', 'l;', 'fads', 'klas', 'asdfjkl;'],
-    icon: '🏰',
-    bgGradient: 'from-orange-400 to-yellow-400',
+    icon: 'home',
+    bgGradient: 'from-[#FFD966] to-[#FFC30B]',
     badgeToUnlock: 'badge-2'
   },
   {
     id: 'lvl-3',
-    name: 'Bay cao hàng phím trên 🎈',
+    name: 'Bay cao hàng phím trên',
     description: 'Chinh phục các phím ở hàng trên: Q, W, E, R, T, Y, U, I, O, P',
     category: 'all-rows',
     targetItems: ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', 'ru', 'ei', 'wo', 'qp', 'ty', 'write', 'your', 'toy', 'tree', 'power'],
-    icon: '✈️',
-    bgGradient: 'from-green-400 to-teal-400'
+    icon: 'rocket',
+    bgGradient: 'from-[#7DC7FF] to-[#5DB8FF]',
   },
   {
     id: 'lvl-4',
-    name: 'Khám phá hàng phím dưới 🗺️',
+    name: 'Khám phá hàng phím dưới',
     description: 'Luyện tập gõ các phím ở hàng dưới: Z, X, C, V, B, N, M',
     category: 'all-rows',
     targetItems: [
@@ -49,12 +49,12 @@ export const LEVELS: Level[] = [
       'cat', 'dog', 'banana', 'monkey', 'zebra', 'pencil',
       'window', 'yellow', 'crayon', 'balloon', 'rabbit', 'summer'
     ],
-    icon: '⛵',
-    bgGradient: 'from-blue-400 to-indigo-400'
+    icon: 'compass',
+    bgGradient: 'from-[#5DB8FF] to-[#3DA5F0]',
   },
   {
     id: 'lvl-5',
-    name: 'Liên minh ba hàng phím 🧩',
+    name: 'Liên minh ba hàng phím',
     description: 'Kết hợp linh hoạt cả ba hàng phím chữ cơ bản thành các từ đáng yêu',
     category: 'all-rows',
     targetItems: [
@@ -65,13 +65,13 @@ export const LEVELS: Level[] = [
       'garden', 'star', 'cloud', 'rainbow', 'bubble', 'cookie',
       'candy', 'butter', 'cheese', 'bread', 'water', 'bottle', 'guitar'
     ],
-    icon: '🔮',
-    bgGradient: 'from-purple-400 to-pink-400',
+    icon: 'puzzle',
+    bgGradient: 'from-[#3DA5F0] to-[#2E94E0]',
     badgeToUnlock: 'badge-3'
   },
   {
     id: 'lvl-6',
-    name: 'Ký tự tiếng Việt 🪄',
+    name: 'Phép Thuật Dấu Việt',
     description: 'Tập gõ các chữ cái tiếng Việt có dấu cơ bản đ, ă, â, ê, ô, ơ, ư và các dấu thanh',
     category: 'vietnamese',
     targetItems: ['đ', 'ă', 'â', 'ê', 'ô', 'ơ', 'ư', 'á', 'à', 'ả', 'ã', 'ạ', 'ấ', 'ầ', 'ẩ', 'ẫ', 'ậ', 'ắ', 'ằ', 'ẳ', 'ẵ', 'ặ', 'ế', 'ề', 'ể', 'ễ', 'ệ', 'ố', 'ồ', 'ổ', 'ỗ', 'ộ', 'ớ', 'ờ', 'ở', 'ỡ', 'ợ', 'ứ', 'ừ', 'ử', 'ữ', 'ự', 'í', 'ì', 'ỉ', 'ĩ', 'ị', 'ó', 'ò', 'ỏ', 'õ', 'ọ', 'ú', 'ù', 'ủ', 'ũ', 'ụ', 'ý', 'ỳ', 'ỷ', 'ỹ', 'ỵ'],
@@ -139,13 +139,13 @@ export const LEVELS: Level[] = [
       'ỹ': 'Telex: yx | VNI: y4',
       'ỵ': 'Telex: yj | VNI: y5'
     },
-    icon: '🇻🇳',
-    bgGradient: 'from-red-400 to-rose-500',
+    icon: 'wand-2',
+    bgGradient: 'from-[#9BE38F] to-[#8AD67F]',
     badgeToUnlock: 'badge-4'
   },
   {
     id: 'lvl-7',
-    name: 'Từ tiếng Việt 🧸',
+    name: 'Xưởng Ghép Từ Diệu Kỳ',
     description: 'Tập gõ từ tiếng Việt ngắn có dấu thanh: sắc, huyền, hỏi, ngã, nặng',
     category: 'vietnamese',
     targetItems: ['bố', 'mẹ', 'bé', 'cá', 'mèo', 'chó', 'lá', 'bóng', 'hoa', 'sách', 'vở', 'nhà', 'học', 'chuối', 'quả'],
@@ -166,12 +166,12 @@ export const LEVELS: Level[] = [
       'chuối': 'Telex: c-h-u-o-i-s | VNI: c-h-u-o-o-i-s-z',
       'quả': 'Telex: q-u-a-r | VNI: q-u-a-3'
     },
-    icon: '🍰',
-    bgGradient: 'from-amber-400 to-orange-500'
+    icon: 'book-open',
+    bgGradient: 'from-[#8AD67F] to-[#7BC96F]',
   },
   {
     id: 'lvl-8',
-    name: 'Câu tiếng Việt 🦄',
+    name: 'Nhà Văn Tí Hon Kể Chuyện',
     description: 'Thử thách gõ những câu tiếng Việt ngắn có nghĩa thật vui nhộn',
     category: 'vietnamese',
     targetItems: [
@@ -181,22 +181,22 @@ export const LEVELS: Level[] = [
       'Mèo con đang ngủ say sưa.',
       'Em chăm chỉ luyện gõ phím.'
     ],
-    icon: '🦜',
-    bgGradient: 'from-violet-400 to-indigo-500',
+    icon: 'message-square-text',
+    bgGradient: 'from-[#7BC96F] to-[#6CBC5F]',
     badgeToUnlock: 'badge-5'
   },
   {
     id: 'lvl-9',
-    name: 'Tập Gõ Văn Bản Của Em ⌨️',
+    name: 'Tập Gõ Văn Bản Của Em',
     description: 'Nhập đoạn văn em muốn và bắt đầu luyện gõ!',
     category: 'typing-challenge',
     targetItems: [],
-    icon: '⌨️',
-    bgGradient: 'from-emerald-400 to-teal-500'
+    icon: 'keyboard',
+    bgGradient: 'from-[#C79CFF] to-[#B78CF0]',
   },
   {
     id: 'lvl-10',
-    name: 'Bubble Race 🧼',
+    name: 'Bubble Race',
     description: 'Thử thách đặc biệt gõ các từ rơi tự do trong bong bóng để ghi thật nhiều điểm',
     category: 'typing-challenge',
     targetItems: [
@@ -205,8 +205,8 @@ export const LEVELS: Level[] = [
       'hoa sen', 'bóng bay', 'ông trăng', 'ngôi sao', 'cơn mưa', 'cầu vồng', 'gấu con',
       'bồ câu', 'cây xanh', 'bánh ngọt', 'kẹo dẻo', 'búp bê', 'xe đạp', 'bút màu', 'vở vẽ'
     ],
-    icon: '🧼',
-    bgGradient: 'from-fuchsia-400 to-pink-500',
+    icon: 'waves',
+    bgGradient: 'from-[#B78CF0] to-[#A77CE0]',
     badgeToUnlock: 'badge-6'
   }
 ];
