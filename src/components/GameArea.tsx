@@ -444,6 +444,78 @@ function applyToneToWord(word: string, tone: string): string {
   return word;
 }
 
+const telexMap: Record<string, string> = {
+  'á': 'as', 'à': 'af', 'ả': 'ar', 'ã': 'ax', 'ạ': 'aj',
+  'ă': 'aw', 'â': 'aa', 'ê': 'ee', 'ô': 'oo', 'ơ': 'ow', 'ư': 'uw', 'đ': 'dd',
+  'ấ': 'aas', 'ầ': 'aaf', 'ẩ': 'aar', 'ẫ': 'aax', 'ậ': 'aaj',
+  'ắ': 'aws', 'ằ': 'awf', 'ẳ': 'awr', 'ẵ': 'awx', 'ặ': 'awj',
+  'ế': 'ees', 'ề': 'eef', 'ể': 'eer', 'ễ': 'eex', 'ệ': 'eej',
+  'ố': 'oos', 'ồ': 'oof', 'ổ': 'oor', 'ỗ': 'oox', 'ộ': 'ooj',
+  'ớ': 'ows', 'ờ': 'owf', 'ở': 'owr', 'ỡ': 'owx', 'ợ': 'owj',
+  'ứ': 'uws', 'ừ': 'uwf', 'ử': 'uwr', 'ữ': 'uwx', 'ự': 'uwj',
+  'é': 'es', 'è': 'ef', 'ẻ': 'er', 'ẽ': 'ex', 'ẹ': 'ej',
+  'í': 'is', 'ì': 'if', 'ỉ': 'ir', 'ĩ': 'ix', 'ị': 'ij',
+  'ó': 'os', 'ò': 'of', 'ỏ': 'or', 'õ': 'ox', 'ọ': 'oj',
+  'ú': 'us', 'ù': 'uf', 'ủ': 'ur', 'ũ': 'ux', 'ụ': 'uj',
+  'ý': 'ys', 'ỳ': 'yf', 'ỷ': 'yr', 'ỹ': 'yx', 'ỵ': 'yj',
+  'Đ': 'DD', 'Â': 'AA', 'Ă': 'AW', 'Ê': 'EE', 'Ô': 'OO', 'Ơ': 'OW', 'Ư': 'UW'
+};
+
+const vniMap: Record<string, string> = {
+  'á': 'a1', 'à': 'a2', 'ả': 'a3', 'ã': 'a4', 'ạ': 'a5',
+  'ă': 'a8', 'â': 'a6', 'ê': 'e6', 'ô': 'o6', 'ơ': 'o7', 'ư': 'u7', 'đ': 'd9',
+  'ấ': 'a61', 'ầ': 'a62', 'ẩ': 'a63', 'ẫ': 'a64', 'ậ': 'a65',
+  'ắ': 'a81', 'ằ': 'a82', 'ẳ': 'a83', 'ẵ': 'a84', 'ặ': 'a85',
+  'ế': 'e61', 'ề': 'e62', 'ể': 'e63', 'ễ': 'e64', 'ệ': 'e65',
+  'ố': 'o61', 'ồ': 'o62', 'ổ': 'o63', 'ỗ': 'o64', 'ộ': 'o65',
+  'ớ': 'o71', 'ờ': 'o72', 'ở': 'o73', 'ỡ': 'o74', 'ợ': 'o75',
+  'ứ': 'u71', 'ừ': 'u72', 'ử': 'u73', 'ữ': 'u74', 'ự': 'u75',
+  'é': 'e1', 'è': 'e2', 'ẻ': 'e3', 'ẽ': 'e4', 'ẹ': 'e5',
+  'í': 'i1', 'ì': 'i2', 'ỉ': 'i3', 'ĩ': 'i4', 'ị': 'i5',
+  'ó': 'o1', 'ò': 'o2', 'ỏ': 'o3', 'õ': 'o4', 'ọ': 'o5',
+  'ú': 'u1', 'ù': 'u2', 'ủ': 'u3', 'ũ': 'u4', 'ụ': 'u5',
+  'ý': 'y1', 'ỳ': 'y2', 'ỷ': 'y3', 'ỹ': 'y4', 'ỵ': 'y5',
+  'Đ': 'D9', 'Â': 'A6', 'Ă': 'A8', 'Ê': 'E6', 'Ô': 'O6', 'Ơ': 'O7', 'Ư': 'U7'
+};
+
+const vowelsList = ["a", "e", "i", "o", "u", "y", "ă", "â", "ê", "ô", "ơ", "u", "ư",
+                "A", "E", "I", "O", "U", "Y", "Ă", "Â", "Ê", "Ô", "Ơ", "Ư",
+                "á", "à", "ả", "ã", "ạ", "ấ", "ầ", "ẩ", "ẫ", "ậ", "ắ", "ằ", "ẳ", "ẵ", "ặ",
+                "é", "è", "ẻ", "ẽ", "ẹ", "ế", "ề", "ể", "ễ", "ệ",
+                "í", "ì", "ỉ", "ĩ", "ị",
+                "ó", "ò", "ỏ", "õ", "ọ", "ố", "ồ", "ổ", "ỗ", "ộ", "ớ", "ờ", "ở", "ỡ", "ợ",
+                "ú", "ù", "ủ", "ũ", "ụ", "ứ", "ừ", "ử", "ữ", "ự",
+                "ý", "ỳ", "ỷ", "ỹ", "ỵ",
+                "Á", "À", "Ả", "Ã", "Ạ", "Ấ", "Ầ", "Ẩ", "Ẫ", "Ậ", "Ắ", "Ằ", "Ẳ", "Ẵ", "Ặ",
+                "É", "È", "Ẻ", "Ẽ", "Ẹ", "Ế", "Ề", "Ể", "Ễ", "Ệ",
+                "Í", "Ì", "Ả", "Ĩ", "Ị",
+                "Ó", "Ò", "Ỏ", "Õ", "Ọ", "Ố", "Ồ", "Ổ", "Ỗ", "Ộ", "Ớ", "Ờ", "Ở", "Ỡ", "Ợ",
+                "Ú", "Ù", "Ủ", "Ũ", "Ụ", "Ứ", "Ừ", "Ử", "Ữ", "Ự",
+                "Ý", "Y", "Ỳ", "Y", "Ỷ", "Y", "Ỷ", "Ỹ", "Ỵ"];
+
+function findFirstVowelIndex(word) {
+  for (let i = 0; i < word.length; i++) {
+    if (vowelsList.includes(word[i])) {
+      return i;
+    }
+  }
+  return -1;
+}
+
+function decodeToRaw(word, method = "telex") {
+  const map = method === "telex" ? telexMap : vniMap;
+  let decoded = "";
+  for (let i = 0; i < word.length; i++) {
+    const char = word[i];
+    if (map[char]) {
+      decoded += map[char];
+    } else {
+      decoded += char;
+    }
+  }
+  return decoded;
+}
+
 function convertWordToVietnamese(word: string, method?: 'telex' | 'vni'): string {
   if (!word) return '';
   const currentMethod = method || 'telex';
@@ -461,24 +533,103 @@ function convertWordToVietnamese(word: string, method?: 'telex' | 'vni'): string
   
   if (!coreWord) return word;
 
-  let result = coreWord;
+  let raw = decodeToRaw(coreWord, currentMethod);
+  let result = '';
 
   if (currentMethod === 'telex') {
-    // 1. Process dd -> đ
-    result = result.replace(/dd/g, 'đ').replace(/DD/g, 'Đ').replace(/dD/g, 'đ').replace(/Dd/g, 'đ');
+    const firstVowelIdx = findFirstVowelIndex(raw);
 
-    // 2. Process double vowels
+    let tone = '';
+    let cleanRaw = '';
+    for (let i = 0; i < raw.length; i++) {
+      const char = raw[i].toLowerCase();
+      // Only extract tone key if it occurs after the first vowel
+      if (['s', 'f', 'r', 'x', 'j', 'z'].includes(char) && (firstVowelIdx !== -1 && i > firstVowelIdx)) {
+        tone = char;
+      } else {
+        cleanRaw += raw[i];
+      }
+    }
+
+    const lowerClean = cleanRaw.toLowerCase();
+    let aCount = (lowerClean.match(/a/g) || []).length;
+    let eCount = (lowerClean.match(/e/g) || []).length;
+    let oCount = (lowerClean.match(/o/g) || []).length;
+    let dCount = (lowerClean.match(/d/g) || []).length;
+
+    result = cleanRaw;
+
+    if (dCount >= 2) {
+      result = result.replace(/d/gi, "");
+      const firstD = cleanRaw.search(/d/i);
+      result = result.slice(0, firstD) + (cleanRaw[firstD] === cleanRaw[firstD].toUpperCase() ? 'Đ' : 'đ') + result.slice(firstD);
+    }
+
+    if (aCount >= 2) {
+      const firstA = cleanRaw.search(/a/i);
+      const isUpper = cleanRaw[firstA] === cleanRaw[firstA].toUpperCase();
+      let temp = '';
+      let foundFirst = false;
+      for (let i = 0; i < cleanRaw.length; i++) {
+        if (cleanRaw[i].toLowerCase() === 'a') {
+          if (!foundFirst) {
+            temp += isUpper ? 'Â' : 'â';
+            foundFirst = true;
+          }
+        } else {
+          temp += cleanRaw[i];
+        }
+      }
+      result = temp;
+    }
+
+    if (eCount >= 2) {
+      const firstE = cleanRaw.search(/e/i);
+      const isUpper = cleanRaw[firstE] === cleanRaw[firstE].toUpperCase();
+      let temp = '';
+      let foundFirst = false;
+      for (let i = 0; i < cleanRaw.length; i++) {
+        if (cleanRaw[i].toLowerCase() === 'e') {
+          if (!foundFirst) {
+            temp += isUpper ? 'Ê' : 'ê';
+            foundFirst = true;
+          }
+        } else {
+          temp += cleanRaw[i];
+        }
+      }
+      result = temp;
+    }
+
+    if (oCount >= 2) {
+      const firstO = cleanRaw.search(/o/i);
+      const isUpper = cleanRaw[firstO] === cleanRaw[firstO].toUpperCase();
+      let temp = '';
+      let foundFirst = false;
+      for (let i = 0; i < cleanRaw.length; i++) {
+        if (cleanRaw[i].toLowerCase() === 'o') {
+          if (!foundFirst) {
+            temp += isUpper ? 'Ô' : 'ô';
+            foundFirst = true;
+          }
+        } else {
+          temp += cleanRaw[i];
+        }
+      }
+      result = temp;
+    }
+
+    // Process double vowels and modification rules on merged stem
+    result = result.replace(/dd/g, 'đ').replace(/DD/g, 'Đ').replace(/dD/g, 'đ').replace(/Dd/g, 'đ');
     result = result.replace(/aa/g, 'â').replace(/AA/g, 'Â').replace(/Aa/g, 'â').replace(/aA/g, 'â');
     result = result.replace(/ee/g, 'ê').replace(/EE/g, 'Ê').replace(/Ee/g, 'ê').replace(/eE/g, 'ê');
     result = result.replace(/oo/g, 'ô').replace(/OO/g, 'Ô').replace(/Oo/g, 'ô').replace(/oO/g, 'ô');
 
-    // 3. Process uow -> ươ BEFORE individual ow/uw
     result = result.replace(/uow/gi, (match) => {
       const isUpper = match === match.toUpperCase();
       return isUpper ? 'ƯƠ' : 'ươ';
     });
 
-    // 4. Process individual w transitions
     result = result.replace(/aw/g, 'ă').replace(/AW/g, 'Ă').replace(/Aw/g, 'ă').replace(/aW/g, 'ă');
     result = result.replace(/ow/g, 'ơ').replace(/OW/g, 'Ơ').replace(/Ow/g, 'ơ').replace(/oW/g, 'ơ');
     result = result.replace(/uw/g, 'ư').replace(/UW/g, 'Ư').replace(/Uw/g, 'ư').replace(/uW/g, 'ư');
@@ -492,30 +643,35 @@ function convertWordToVietnamese(word: string, method?: 'telex' | 'vni'): string
       });
     }
 
-    // 5. Smart auto-corrections
     result = result.replace(/uoi/gi, m => m === m.toUpperCase() ? 'UÔI' : 'uôi');
     result = result.replace(/uou/gi, m => m === m.toUpperCase() ? 'ƯƠU' : 'ươu');
 
-    // 6. Tone processing
-    const lastChar = result.slice(-1).toLowerCase();
-    if (['s', 'f', 'r', 'x', 'j', 'z'].includes(lastChar)) {
-      const stem = result.slice(0, -1);
-      const hasVowel = /[aeiouyăâêôơư]/i.test(stem);
-      if (hasVowel) {
-        if (lastChar === 'z') {
-          result = removeTone(stem);
-        } else {
-          const toneMap: Record<string, string> = { s: 'sắc', f: 'huyền', r: 'hỏi', x: 'ngã', j: 'nặng' };
-          const tone = toneMap[lastChar];
-          const cleared = removeTone(stem);
-          const updatedStem = applyToneToWord(cleared, tone);
-          if (updatedStem !== stem) {
-            result = updatedStem;
-          }
-        }
-      }
+    // Reapply tone dynamically to standard position
+    if (tone && tone !== 'z') {
+      const toneMap: Record<string, string> = { s: 'sắc', f: 'huyền', r: 'hỏi', x: 'ngã', j: 'nặng' };
+      const toneName = toneMap[tone];
+      const cleared = removeTone(result);
+      const updatedStem = applyToneToWord(cleared, toneName);
+      result = updatedStem;
+    } else if (tone === 'z') {
+      result = removeTone(result);
     }
   } else {
+    // VNI Method
+    const firstVowelIdx = findFirstVowelIndex(raw);
+
+    let tone = '';
+    let cleanRaw = '';
+    for (let i = 0; i < raw.length; i++) {
+      if (['1', '2', '3', '4', '5', '0'].includes(raw[i]) && (firstVowelIdx !== -1 && i > firstVowelIdx)) {
+        tone = raw[i];
+      } else {
+        cleanRaw += raw[i];
+      }
+    }
+
+    result = cleanRaw;
+
     result = result.replace(/d9/g, 'đ').replace(/D9/g, 'Đ');
     result = result.replace(/a6/g, 'â').replace(/A6/g, 'Â');
     result = result.replace(/e6/g, 'ê').replace(/E6/g, 'Ê');
@@ -524,27 +680,37 @@ function convertWordToVietnamese(word: string, method?: 'telex' | 'vni'): string
     result = result.replace(/o7/g, 'ơ').replace(/O7/g, 'Ơ');
     result = result.replace(/u7/g, 'ư').replace(/U7/g, 'Ư');
 
-    // Smart auto-corrections for VNI too
+    let a6Count = (result.match(/â/gi) || []).length;
+    let aCount = (result.match(/a/gi) || []).length;
+    if (a6Count >= 1 && aCount >= 1) {
+      const firstA = result.search(/[aâ]/i);
+      const isUpper = result[firstA] === result[firstA].toUpperCase();
+      let temp = '';
+      let foundFirst = false;
+      for (let i = 0; i < result.length; i++) {
+        if (['a', 'â'].includes(result[i].toLowerCase())) {
+          if (!foundFirst) {
+            temp += isUpper ? 'Â' : 'â';
+            foundFirst = true;
+          }
+        } else {
+          temp += result[i];
+        }
+      }
+      result = temp;
+    }
+
     result = result.replace(/uoi/gi, m => m === m.toUpperCase() ? 'UÔI' : 'uôi');
     result = result.replace(/uou/gi, m => m === m.toUpperCase() ? 'ƯƠU' : 'ươu');
 
-    const lastChar = result.slice(-1);
-    if (['1', '2', '3', '4', '5', '0'].includes(lastChar)) {
-      const stem = result.slice(0, -1);
-      const hasVowel = /[aeiouyăâêôơư]/i.test(stem);
-      if (hasVowel) {
-        if (lastChar === '0') {
-          result = removeTone(stem);
-        } else {
-          const toneMap: Record<string, string> = { '1': 'sắc', '2': 'huyền', '3': 'hỏi', '4': 'ngã', '5': 'nặng' };
-          const tone = toneMap[lastChar];
-          const cleared = removeTone(stem);
-          const updatedStem = applyToneToWord(cleared, tone);
-          if (updatedStem !== stem) {
-            result = updatedStem;
-          }
-        }
-      }
+    if (tone && tone !== '0') {
+      const toneMap: Record<string, string> = { '1': 'sắc', '2': 'huyền', '3': 'hỏi', '4': 'ngã', '5': 'nặng' };
+      const toneName = toneMap[tone];
+      const cleared = removeTone(result);
+      const updatedStem = applyToneToWord(cleared, toneName);
+      result = updatedStem;
+    } else if (tone === '0') {
+      result = removeTone(result);
     }
   }
 
@@ -1516,7 +1682,7 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
                             setCurrentSentenceIndex(0);
                             setCurrentIndex(0);
                             setTypedValue('');
-                            playSound('click');
+                            playSound('key-press');
                           }}
                           className="text-xs text-[#8a8aa0] font-bold hover:text-[#5b8cff] transition-colors underline"
                         >
