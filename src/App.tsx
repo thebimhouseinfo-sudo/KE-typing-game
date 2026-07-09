@@ -60,7 +60,7 @@ export default function App() {
         // Game requests progress data: Read from Blogger's localStorage
         const savedData = localStorage.getItem(STORAGE_KEY);
         // Send data back to the iframe
-        event.source?.postMessage({
+        (event.source as any)?.postMessage({
           type: 'SEND_PROGRESS',
           data: savedData ? JSON.parse(savedData) : null
         }, event.origin);

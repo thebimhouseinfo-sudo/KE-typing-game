@@ -29,7 +29,7 @@ export interface Level {
   id: string;
   name: string;
   description: string;
-  category: 'home-row' | 'all-rows' | 'vi-letters' | 'vi-words' | 'vi-sentences' | 'bubble-race';
+  category: 'home-row' | 'all-rows' | 'vietnamese' | 'typing-challenge';
   targetItems: string[];
   helperTips?: {
     [key: string]: string; // e.g. a -> "Telex: gõ 'as' để thành 'á'"
