@@ -160,10 +160,10 @@ export const LEVELS: Level[] = [
       'bóng': 'Telex: b-o-n-g-s | VNI: b-o-n-g-1',
       'hoa': 'Telex: h-o-a | VNI: h-o-a',
       'sách': 'Telex: s-a-c-h-s | VNI: s-a-c-h-1',
-      'vở': 'Telex: v-o-r | VNI: v-o-7-3 (hoặc v-o-w-r)',
+      'vở': 'Telex: v-o-w-r (hoặc v-o-o-r) | VNI: v-o-7-3',
       'nhà': 'Telex: n-h-a-f | VNI: n-h-a-2',
       'học': 'Telex: h-o-c-j | VNI: h-o-c-5',
-      'chuối': 'Telex: c-h-u-o-i-s | VNI: c-h-u-o-o-i-s-z',
+      'chuối': 'Telex: c-h-u-o-i-s (hoặc c-h-u-o-o-s-i) | VNI: c-h-u-o-i-1 (hoặc c-h-u-6-o-i-1)',
       'quả': 'Telex: q-u-a-r | VNI: q-u-a-3'
     },
     icon: 'book-open',
