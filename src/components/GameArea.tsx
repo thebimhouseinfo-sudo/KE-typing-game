@@ -370,6 +370,37 @@ const vowelTones: Record<string, Record<string, string>> = {
   'Y': { 'sắc': 'Ý', 'huyền': 'Ỳ', 'hỏi': 'Ỷ', 'ngã': 'Ỹ', 'nặng': 'Ỵ' }
 };
 
+const baseCharMap: Record<string, string> = {
+  'á': 'a', 'à': 'a', 'ả': 'a', 'ã': 'a', 'ạ': 'a',
+  'ắ': 'ă', 'ằ': 'ă', 'ẳ': 'ă', 'ẵ': 'ă', 'ặ': 'ă',
+  'ấ': 'â', 'ầ': 'â', 'ẩ': 'â', 'ẫ': 'â', 'ậ': 'â',
+  'é': 'e', 'è': 'e', 'ẻ': 'e', 'ẽ': 'e', 'ẹ': 'e',
+  'ế': 'ê', 'ề': 'ê', 'ể': 'ê', 'ễ': 'ê', 'ệ': 'ê',
+  'í': 'i', 'ì': 'i', 'ỉ': 'i', 'ĩ': 'i', 'ị': 'i',
+  'ó': 'o', 'ò': 'o', 'ỏ': 'o', 'õ': 'o', 'ọ': 'o',
+  'ố': 'ô', 'ồ': 'ô', 'ổ': 'ô', 'ỗ': 'ô', 'ộ': 'ô',
+  'ớ': 'ơ', 'ờ': 'ơ', 'ở': 'ơ', 'ỡ': 'ơ', 'ợ': 'ơ',
+  'ú': 'u', 'ù': 'u', 'ủ': 'u', 'ũ': 'u', 'ụ': 'u',
+  'ứ': 'ư', 'ừ': 'ư', 'ử': 'ư', 'ữ': 'ư', 'ự': 'ư',
+  'ý': 'y', 'ỳ': 'y', 'ỷ': 'y', 'ỹ': 'y', 'ỵ': 'y',
+  'Á': 'A', 'À': 'A', 'Ả': 'A', 'Ã': 'A', 'Ạ': 'A',
+  'Ắ': 'Ă', 'Ằ': 'Ă', 'Ẳ': 'Ă', 'Ẵ': 'Ă', 'Ặ': 'Ă',
+  'Ấ': 'Â', 'Ầ': 'Â', 'Ẩ': 'Â', 'Ẫ': 'Â', 'Ậ': 'Â',
+  'É': 'E', 'È': 'E', 'Ẻ': 'E', 'Ẽ': 'E', 'Ẹ': 'E',
+  'Ế': 'Ê', 'Ề': 'Ê', 'Ể': 'Ê', 'Ễ': 'Ê', 'Ệ': 'Ê',
+  'Í': 'I', 'Ì': 'I', 'Ỉ': 'I', 'Ĩ': 'I', 'Ị': 'I',
+  'Ó': 'O', 'Ò': 'O', 'Ỏ': 'O', 'Õ': 'O', 'Ọ': 'O',
+  'Ố': 'Ô', 'Ồ': 'Ô', 'Ổ': 'Ô', 'Ỗ': 'Ô', 'Ộ': 'Ô',
+  'Ớ': 'Ơ', 'Ờ': 'Ơ', 'Ở': 'Ơ', 'Ỡ': 'Ơ', 'Ợ': 'Ơ',
+  'Ú': 'U', 'Ù': 'U', 'Ủ': 'U', 'Ũ': 'U', 'Ụ': 'U',
+  'Ứ': 'Ư', 'Ừ': 'Ư', 'Ử': 'Ư', 'Ữ': 'Ư', 'Ự': 'Ư',
+  'Ý': 'Y', 'Ỳ': 'Y', 'Ỷ': 'Y', 'Ỹ': 'Y', 'Ỵ': 'Y'
+};
+
+function removeTone(word: string): string {
+  return word.split('').map(c => baseCharMap[c] || c).join('');
+}
+
 function applyToneToWord(word: string, tone: string): string {
   const vowels = ['a', 'ă', 'â', 'e', 'ê', 'i', 'o', 'ô', 'ơ', 'u', 'ư', 'y',
                   'A', 'Ă', 'Â', 'E', 'Ê', 'I', 'O', 'Ô', 'Ơ', 'U', 'Ư', 'Y'];
@@ -433,10 +464,21 @@ function convertWordToVietnamese(word: string, method?: 'telex' | 'vni'): string
   let result = coreWord;
 
   if (currentMethod === 'telex') {
+    // 1. Process dd -> đ
     result = result.replace(/dd/g, 'đ').replace(/DD/g, 'Đ').replace(/dD/g, 'đ').replace(/Dd/g, 'đ');
+
+    // 2. Process double vowels
     result = result.replace(/aa/g, 'â').replace(/AA/g, 'Â').replace(/Aa/g, 'â').replace(/aA/g, 'â');
     result = result.replace(/ee/g, 'ê').replace(/EE/g, 'Ê').replace(/Ee/g, 'ê').replace(/eE/g, 'ê');
     result = result.replace(/oo/g, 'ô').replace(/OO/g, 'Ô').replace(/Oo/g, 'ô').replace(/oO/g, 'ô');
+
+    // 3. Process uow -> ươ BEFORE individual ow/uw
+    result = result.replace(/uow/gi, (match) => {
+      const isUpper = match === match.toUpperCase();
+      return isUpper ? 'ƯƠ' : 'ươ';
+    });
+
+    // 4. Process individual w transitions
     result = result.replace(/aw/g, 'ă').replace(/AW/g, 'Ă').replace(/Aw/g, 'ă').replace(/aW/g, 'ă');
     result = result.replace(/ow/g, 'ơ').replace(/OW/g, 'Ơ').replace(/Ow/g, 'ơ').replace(/oW/g, 'ơ');
     result = result.replace(/uw/g, 'ư').replace(/UW/g, 'Ư').replace(/Uw/g, 'ư').replace(/uW/g, 'ư');
@@ -450,14 +492,27 @@ function convertWordToVietnamese(word: string, method?: 'telex' | 'vni'): string
       });
     }
 
+    // 5. Smart auto-corrections
+    result = result.replace(/uoi/gi, m => m === m.toUpperCase() ? 'UÔI' : 'uôi');
+    result = result.replace(/uou/gi, m => m === m.toUpperCase() ? 'ƯƠU' : 'ươu');
+
+    // 6. Tone processing
     const lastChar = result.slice(-1).toLowerCase();
-    if (['s', 'f', 'r', 'x', 'j'].includes(lastChar)) {
-      const toneMap: Record<string, string> = { s: 'sắc', f: 'huyền', r: 'hỏi', x: 'ngã', j: 'nặng' };
-      const tone = toneMap[lastChar];
+    if (['s', 'f', 'r', 'x', 'j', 'z'].includes(lastChar)) {
       const stem = result.slice(0, -1);
-      const updatedStem = applyToneToWord(stem, tone);
-      if (updatedStem !== stem) {
-        result = updatedStem;
+      const hasVowel = /[aeiouyăâêôơư]/i.test(stem);
+      if (hasVowel) {
+        if (lastChar === 'z') {
+          result = removeTone(stem);
+        } else {
+          const toneMap: Record<string, string> = { s: 'sắc', f: 'huyền', r: 'hỏi', x: 'ngã', j: 'nặng' };
+          const tone = toneMap[lastChar];
+          const cleared = removeTone(stem);
+          const updatedStem = applyToneToWord(cleared, tone);
+          if (updatedStem !== stem) {
+            result = updatedStem;
+          }
+        }
       }
     }
   } else {
@@ -469,14 +524,26 @@ function convertWordToVietnamese(word: string, method?: 'telex' | 'vni'): string
     result = result.replace(/o7/g, 'ơ').replace(/O7/g, 'Ơ');
     result = result.replace(/u7/g, 'ư').replace(/U7/g, 'Ư');
 
+    // Smart auto-corrections for VNI too
+    result = result.replace(/uoi/gi, m => m === m.toUpperCase() ? 'UÔI' : 'uôi');
+    result = result.replace(/uou/gi, m => m === m.toUpperCase() ? 'ƯƠU' : 'ươu');
+
     const lastChar = result.slice(-1);
-    if (['1', '2', '3', '4', '5'].includes(lastChar)) {
-      const toneMap: Record<string, string> = { '1': 'sắc', '2': 'huyền', '3': 'hỏi', '4': 'ngã', '5': 'nặng' };
-      const tone = toneMap[lastChar];
+    if (['1', '2', '3', '4', '5', '0'].includes(lastChar)) {
       const stem = result.slice(0, -1);
-      const updatedStem = applyToneToWord(stem, tone);
-      if (updatedStem !== stem) {
-        result = updatedStem;
+      const hasVowel = /[aeiouyăâêôơư]/i.test(stem);
+      if (hasVowel) {
+        if (lastChar === '0') {
+          result = removeTone(stem);
+        } else {
+          const toneMap: Record<string, string> = { '1': 'sắc', '2': 'huyền', '3': 'hỏi', '4': 'ngã', '5': 'nặng' };
+          const tone = toneMap[lastChar];
+          const cleared = removeTone(stem);
+          const updatedStem = applyToneToWord(cleared, tone);
+          if (updatedStem !== stem) {
+            result = updatedStem;
+          }
+        }
       }
     }
   }
