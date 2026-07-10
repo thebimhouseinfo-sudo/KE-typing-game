@@ -179,7 +179,12 @@ export const LEVELS: Level[] = [
       'Sách vở là bạn tốt của em.',
       'Chú chim nhỏ hót líu lo.',
       'Mèo con đang ngủ say sưa.',
-      'Em chăm chỉ luyện gõ phím.'
+      'Em chăm chỉ luyện gõ phím.',
+      'Bé đi học rất vui vẻ.',
+      'Ông bà bế bé đi chơi.',
+      'Cá vàng bơi trong bể nước.',
+      'Mặt trời tỏa nắng rực rỡ.',
+      'Cả nhà yêu thương nhau nhiều.'
     ],
     icon: 'message-square-text',
     bgGradient: 'from-[#7BC96F] to-[#6CBC5F]',
