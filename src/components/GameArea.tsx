@@ -401,43 +401,91 @@ function removeTone(word: string): string {
   return word.split('').map(c => baseCharMap[c] || c).join('');
 }
 
-function applyToneToWord(word: string, tone: string): string {
-  const vowels = ['a', 'ă', 'â', 'e', 'ê', 'i', 'o', 'ô', 'ơ', 'u', 'ư', 'y',
-                  'A', 'Ă', 'Â', 'E', 'Ê', 'I', 'O', 'Ô', 'Ơ', 'U', 'Ư', 'Y'];
+function splitVietnameseWord(word: string): { consonant: string; rhyme: string } {
+  if (!word) return { consonant: '', rhyme: '' };
   
-  const indices: number[] = [];
-  for (let i = 0; i < word.length; i++) {
-    if (vowels.includes(word[i])) {
-      indices.push(i);
+  const baseLower = word.split('').map(c => getBaseEnglishLetter(c).toLowerCase()).join('');
+  const vowels = ['a', 'e', 'i', 'o', 'u', 'y'];
+
+  // Rule for "qu"
+  if (baseLower.startsWith('qu')) {
+    return {
+      consonant: word.slice(0, 2),
+      rhyme: word.slice(2)
+    };
+  }
+
+  // Rule for "gi"
+  if (baseLower.startsWith('gi')) {
+    if (baseLower.length > 2 && vowels.includes(baseLower[2])) {
+      return {
+        consonant: word.slice(0, 2),
+        rhyme: word.slice(2)
+      };
+    }
+    return {
+      consonant: word.slice(0, 1),
+      rhyme: word.slice(1)
+    };
+  }
+
+  // Find first vowel
+  let firstVowelIdx = -1;
+  for (let i = 0; i < baseLower.length; i++) {
+    if (vowels.includes(baseLower[i])) {
+      firstVowelIdx = i;
+      break;
     }
   }
 
-  if (indices.length === 0) return word;
-
-  let targetIdx = indices[0];
-
-  if (indices.length === 2) {
-    const pair = (word[indices[0]] + word[indices[1]]).toLowerCase();
-    if (['oa', 'oe', 'uy', 'ua', 'uô', 'uo', 'iê', 'yê', 'ươ', 'oă', 'uâ', 'uơ'].includes(pair)) {
-      targetIdx = indices[1];
-    } else {
-      targetIdx = indices[0];
-    }
-  } else if (indices.length === 3) {
-    const b0 = getBaseEnglishLetter(word[indices[0]]).toLowerCase();
-    const b1 = getBaseEnglishLetter(word[indices[1]]).toLowerCase();
-    const b2 = getBaseEnglishLetter(word[indices[2]]).toLowerCase();
-    if (b0 === 'u' && b1 === 'y' && b2 === 'e') {
-      targetIdx = indices[2];
-    } else {
-      targetIdx = indices[1];
-    }
+  if (firstVowelIdx === -1) {
+    return { consonant: word, rhyme: '' };
   }
 
-  const targetChar = word[targetIdx];
+  return {
+    consonant: word.slice(0, firstVowelIdx),
+    rhyme: word.slice(firstVowelIdx)
+  };
+}
+
+function getRhymeUnits(rhyme: string): string[] {
+  if (!rhyme) return [];
+  const rhymeLower = rhyme.toLowerCase();
+
+  if (rhymeLower.endsWith('ng') || rhymeLower.endsWith('nh') || rhymeLower.endsWith('ch')) {
+    const units: string[] = [];
+    for (let i = 0; i < rhyme.length - 2; i++) {
+      units.push(rhyme[i]);
+    }
+    units.push(rhyme.slice(rhyme.length - 2));
+    return units;
+  }
+
+  return rhyme.split('');
+}
+
+function applyToneToWord(word: string, tone: string): string {
+  const { consonant, rhyme } = splitVietnameseWord(word);
+  if (!rhyme) return word;
+
+  const units = getRhymeUnits(rhyme);
+  if (units.length === 0) return word;
+
+  let targetUnitIdx = 0;
+  if (units.length === 2) {
+    targetUnitIdx = 0;
+  } else if (units.length >= 3) {
+    targetUnitIdx = 1;
+  }
+
+  const targetCharIdx = consonant.length + targetUnitIdx;
+
+  if (targetCharIdx >= word.length) return word;
+
+  const targetChar = word[targetCharIdx];
   if (vowelTones[targetChar] && vowelTones[targetChar][tone]) {
     const chars = word.split('');
-    chars[targetIdx] = vowelTones[targetChar][tone];
+    chars[targetCharIdx] = vowelTones[targetChar][tone];
     return chars.join('');
   }
 
