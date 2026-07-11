@@ -46,10 +46,10 @@ const LEVEL_9_STORIES: Array<{ title: string; sentences: string[] }> = [
 function getFingerForKey(char: string): string | null {
   if (!char) return null;
   const cleanChar = char.toLowerCase();
-  
+
   let searchKey = cleanChar;
   if (cleanChar === ' ') searchKey = 'space';
-  
+
   const found = KEYBOARD_KEYS.find((k) => k.key.toLowerCase() === searchKey);
   return found ? found.finger : null;
 }
@@ -75,7 +75,7 @@ const getFingerLabel = (char: string) => {
   if (!item) {
     return { name: 'Phím Thường ⌨️', side: 'Bàn Phím', colorClass: 'bg-slate-100 text-slate-700 border-slate-300', isHomeKey: false };
   }
-  
+
   const labelMap: Record<string, string> = {
     'left-pinky': 'Ngón Út Tay Trái 🔴',
     'left-ring': 'Ngón Áp Út Tay Trái 🟢',
@@ -88,7 +88,7 @@ const getFingerLabel = (char: string) => {
     'right-ring': 'Ngón Áp Út Tay Phải 🟢',
     'right-pinky': 'Ngón Út Tay Phải 🔴'
   };
-  
+
   const colorMap: Record<string, string> = {
     'left-pinky': 'bg-rose-100 text-rose-700 border-rose-400',
     'left-ring': 'bg-pink-100 text-pink-700 border-pink-400',
@@ -315,7 +315,7 @@ function getBaseEnglishLetter(char: string): string {
 function getDiacriticsOfChar(char: string): string[] {
   const charLower = char.toLowerCase();
   const diacritics: string[] = [];
-  
+
   if (['â', 'ê', 'ô', 'ấ', 'ầ', 'ẩ', 'ẫ', 'ậ', 'ế', 'ề', 'ể', 'ễ', 'ệ', 'ố', 'ồ', 'ổ', 'ỗ', 'ộ'].includes(charLower)) {
     diacritics.push('circumflex');
   }
@@ -328,7 +328,7 @@ function getDiacriticsOfChar(char: string): string[] {
   if (['đ'].includes(charLower)) {
     diacritics.push('crossed');
   }
-  
+
   // Tones
   if (['á', 'ấ', 'ắ', 'é', 'ế', 'í', 'ó', 'ố', 'ớ', 'ú', 'ứ', 'ý'].includes(charLower)) {
     diacritics.push('acute');
@@ -345,17 +345,17 @@ function getDiacriticsOfChar(char: string): string[] {
   if (['ạ', 'ậ', 'ặ', 'ẹ', 'ệ', 'ị', 'ọ', 'ộ', 'ợ', 'ụ', 'ự', 'ỵ'].includes(charLower)) {
     diacritics.push('dot');
   }
-  
+
   return diacritics;
 }
 
 function isValidIntermediateVowel(inputChar: string, targetChar: string): boolean {
   if (inputChar.toLowerCase() === targetChar.toLowerCase()) return true;
   if (getBaseEnglishLetter(inputChar).toLowerCase() !== getBaseEnglishLetter(targetChar).toLowerCase()) return false;
-  
+
   const inputDis = getDiacriticsOfChar(inputChar);
   const targetDis = getDiacriticsOfChar(targetChar);
-  
+
   // Every diacritic in the input must also be present in the target
   return inputDis.every(diacritic => targetDis.includes(diacritic));
 }
@@ -420,7 +420,7 @@ function removeTone(word: string): string {
 
 function splitVietnameseWord(word: string): { consonant: string; rhyme: string } {
   if (!word) return { consonant: '', rhyme: '' };
-  
+
   const baseLower = word.split('').map(c => getBaseEnglishLetter(c).toLowerCase()).join('');
   const vowels = ['a', 'e', 'i', 'o', 'u', 'y'];
 
@@ -588,14 +588,14 @@ function convertWordToVietnamese(word: string, method?: 'telex' | 'vni'): string
   // Extract leading non-alphabetic/numeric characters
   const leadingMatch = word.match(/^[^A-Za-z0-9àáảãạâầấẩẫậăằắẳẵặèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵđĐ]+/);
   const leading = leadingMatch ? leadingMatch[0] : '';
-  
+
   // Extract trailing non-alphabetic/numeric characters
   const trailingMatch = word.match(/[^A-Za-z0-9àáảãạâầấẩẫậăằắẳẵặèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵđĐ]+$/);
   const trailing = trailingMatch ? trailingMatch[0] : '';
-  
+
   // Get the core word to convert
   const coreWord = word.slice(leading.length, word.length - trailing.length);
-  
+
   if (!coreWord) return word;
 
   let raw = decodeToRaw(coreWord, currentMethod);
@@ -825,6 +825,38 @@ function applyVietnameseWordExceptions(inputVal: string, targetStr: string): str
     return inputWord;
   }).join(' ');
 }
+function removeVietnameseMarksForCompare(value: string): string {
+  return value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D');
+}
+
+function getTypingFeedback(attempt: string, target: string): string {
+  const cleanAttempt = attempt.trimEnd();
+  const cleanTarget = target.trimEnd();
+
+  if (!cleanAttempt) return 'Bé viết thiếu chữ.';
+  if (cleanAttempt.length < cleanTarget.length) return 'Bé viết thiếu chữ.';
+  if (cleanAttempt.length > cleanTarget.length) return 'Bé viết thừa chữ.';
+
+  for (let i = 0; i < cleanTarget.length; i++) {
+    const got = cleanAttempt[i];
+    const expected = cleanTarget[i];
+    if (got === expected) continue;
+
+    if (got.toLowerCase() === expected.toLowerCase()) {
+      return expected === expected.toUpperCase() && expected !== expected.toLowerCase()
+        ? 'Bé chưa viết hoa.'
+        : 'Bé chưa viết đúng chữ hoa/thường.';
+    }
+
+    if (removeVietnameseMarksForCompare(got).toLowerCase() === removeVietnameseMarksForCompare(expected).toLowerCase()) {
+      return 'Bé viết thiếu dấu hoặc sai dấu.';
+    }
+
+    return 'Bé viết sai chữ.';
+  }
+
+  return 'Bé chưa viết đúng.';
+}
 function isVietnamesePrefixMatch(inputVal: string, targetStr: string, method?: 'telex' | 'vni'): boolean {
   const currentMethod = method || 'telex';
   const convertedWords = applyVietnameseWordExceptions(
@@ -860,7 +892,7 @@ function getNextKeyForVietnamese(inputChar: string, targetChar: string, method?:
   const inputDis = getDiacriticsOfChar(inputChar);
   const targetDis = getDiacriticsOfChar(targetChar);
   const missingDis = targetDis.filter(d => !inputDis.includes(d));
-  
+
   if (missingDis.length === 0) {
     if (targetChar.toLowerCase() === 'đ' && inputChar.toLowerCase() === 'd') {
       return currentMethod === 'telex' ? 'd' : '9';
@@ -869,7 +901,7 @@ function getNextKeyForVietnamese(inputChar: string, targetChar: string, method?:
   }
 
   const firstMissing = missingDis[0];
-  
+
   if (currentMethod === 'telex') {
     switch (firstMissing) {
       case 'circumflex':
@@ -913,7 +945,7 @@ function getNextKeyForVietnamese(inputChar: string, targetChar: string, method?:
         return '5';
     }
   }
-  
+
   return '';
 }
 
@@ -922,7 +954,7 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
   const [isPlaying, setIsPlaying] = useState(true);
   const [showResults, setShowResults] = useState(false);
   const [showHandOverlay, setShowHandOverlay] = useState(false);
-  
+
   // Map icon string IDs to Lucide React components
   const LEVEL_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
     'party-popper': PartyPopper,
@@ -936,9 +968,9 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
     'keyboard': KeyboardIcon,
     'waves': Waves
   };
-  
+
   const LevelIcon = LEVEL_ICONS[level.icon as keyof typeof LEVEL_ICONS];
-  
+
   // Auto-enter fullscreen when game starts
   useEffect(() => {
     enterFullscreen();
@@ -969,7 +1001,7 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
       window.removeEventListener('message', handleMessage);
     };
   }, []);
-  
+
   // Game metrics
   const [typedValue, setTypedValue] = useState('');
   const [rawTypedValue, setRawTypedValue] = useState('');
@@ -985,10 +1017,11 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
   const [wpm, setWpm] = useState(0);
   const [accuracy, setAccuracy] = useState(100);
   const [stars, setStars] = useState(0);
-  
+
   // Confetti / effects
   const [showConfetti, setShowConfetti] = useState(false);
   const [hitEffect, setHitEffect] = useState<string | null>(null); // 'correct' | 'wrong'
+  const [typingFeedback, setTypingFeedback] = useState('');
   const effectTimeout = useRef<NodeJS.Timeout | null>(null);
 
   // BUBBLE RACE SPECIFIC STATES
@@ -1020,6 +1053,7 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
     setCurrentIndex(0);
     setTypedValue('');
     setRawTypedValue('');
+    setTypingFeedback('');
     setIsTypingMode(true);
     setTimeout(() => inputRef.current?.focus(), 100);
     updateKeyboardGuide('', story.sentences[0]);
@@ -1029,20 +1063,20 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
     const words = text.trim().split(/\s+/).filter(w => w.length > 0);
     const chunks: string[] = [];
     const chunkSize = 10;
-    
+
     for (let i = 0; i < words.length; i += chunkSize) {
       const chunk = words.slice(i, i + chunkSize).join(' ');
       chunks.push(chunk);
     }
-    
+
     return chunks;
   };
 
   // Get current raw items - For lvl-9, use the selected built-in story.
-  const targetItems = level.id === 'lvl-9' && sentences.length > 0 
-    ? sentences 
+  const targetItems = level.id === 'lvl-9' && sentences.length > 0
+    ? sentences
     : (level.id === 'lvl-9' && customTextInput.trim() ? [customTextInput.trim()] : level.targetItems);
-  
+
   const currentItem = targetItems[currentIndex] || '';
 
   // Get spelling formula suggestion for Vietnam kids
@@ -1115,7 +1149,7 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
         return;
       }
     }
-    
+
     // Simplistic visual helper mapping
     const vnKeys: Record<string, string> = {
       'đ': 'd', 'ă': 'a', 'â': 'a', 'ê': 'e', 'ô': 'o', 'ơ': 'o', 'ư': 'u',
@@ -1145,12 +1179,12 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
       // Filter out words that are already active on screen to prevent duplicates
       const activeWords = prev.map(b => b.word.toLowerCase());
       const availableWords = list.filter(w => !activeWords.includes(w.toLowerCase()));
-      const randomWord = availableWords.length > 0 
+      const randomWord = availableWords.length > 0
         ? availableWords[Math.floor(Math.random() * availableWords.length)]
         : list[Math.floor(Math.random() * list.length)];
 
       const id = `bubble-${bubbleIdCounter.current++}`;
-      
+
       const colors = [
         'from-pink-400 to-rose-500 shadow-rose-300',
         'from-sky-400 to-blue-500 shadow-blue-300',
@@ -1161,11 +1195,11 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
       const color = colors[Math.floor(Math.random() * colors.length)];
       const size = Math.max(100, Math.min(140, randomWord.length * 14 + 50));
 
-      // Choose a beautiful X coordinate that maximizes horizontal distance with active bubbles 
+      // Choose a beautiful X coordinate that maximizes horizontal distance with active bubbles
       // of similar heights, to prevent bubbles from stacking or overlapping ("dính chùm")
       let bestX = 10 + Math.random() * 70;
       let maxMinDist = -1;
-      
+
       for (let attempt = 0; attempt < 25; attempt++) {
         const candidateX = 10 + Math.random() * 70;
         let minDist = 100;
@@ -1178,7 +1212,7 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
             }
           }
         }
-        
+
         if (minDist > maxMinDist) {
           maxMinDist = minDist;
           bestX = candidateX;
@@ -1277,7 +1311,7 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
     const rawInput = e.target.value;
     const isBubbleRace = level.id === 'lvl-10';
     const isLevel9TypingMode = level.id === 'lvl-9' && isTypingMode && sentences.length > 0;
-    
+
     let targetClean = isBubbleRace ? '' : currentItem;
 
     if (!isBubbleRace && !isLevel9TypingMode && rawInput === ' ') {
@@ -1285,7 +1319,7 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
       e.target.value = '';
       return;
     }
-    
+
     // Convert input base keys using Telex/VNI if it's a Vietnamese level/bubble race, otherwise normalize by target
     let val = rawInput;
     if (usesVietnameseKeyboard) {
@@ -1296,7 +1330,7 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
       val = normalizeInputByTarget(rawInput, targetClean);
       e.target.value = val;
     }
-    
+
     // Start timing on first keypress
     if (startTime === null) {
       setStartTime(Date.now());
@@ -1307,19 +1341,20 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
     // Level 9 Typing Mode - sentence by sentence
     if (isLevel9TypingMode) {
       setTypedValue(val);
-      
+
       // Check if sentence is complete
       if (val === targetClean) {
         playSound('correct');
         triggerConfetti();
         setFeedbackEffect('correct');
         setScore(prev => prev + targetClean.length * 15);
-        
+        setTypingFeedback('');
+
         // Clear input
         setTypedValue('');
         setRawTypedValue('');
         e.target.value = '';
-        
+
         // Move to next sentence or finish
         if (currentSentenceIndex < sentences.length - 1) {
           setCurrentSentenceIndex(prev => prev + 1);
@@ -1334,17 +1369,30 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
         }
         return;
       }
-      
-      // Check prefix match using Vietnamese-aware comparison
+
+      const isCompletedWordAttempt = rawInput.endsWith(' ') && rawInput.trim().length > 0;
       const isCorrectSequence = usesVietnameseKeyboard
         ? isVietnamesePrefixMatch(rawInput, targetClean, profile.inputMethod)
-        : targetClean.startsWith(val);
+        : targetClean.toLowerCase().startsWith(val.toLowerCase());
+
       if (isCorrectSequence) {
+        setTypingFeedback('');
         updateKeyboardGuide(val, targetClean);
-      } else {
+      } else if (isCompletedWordAttempt) {
+        const attemptedPart = val.trimEnd().split(/\s+/).pop() || val.trimEnd();
+        const targetPart = targetClean.slice(0, Math.max(0, val.trimEnd().length)).trimEnd().split(/\s+/).pop() || targetClean;
         playSound('wrong');
         setFeedbackEffect('wrong');
+        setTypingFeedback(getTypingFeedback(attemptedPart, targetPart));
         setErrors(prev => prev + 1);
+        const rawWithoutSubmitSpace = rawInput.trimEnd();
+        const correctedValue = val.trimEnd();
+        setRawTypedValue(rawWithoutSubmitSpace);
+        setTypedValue(correctedValue);
+        e.target.value = usesVietnameseKeyboard ? rawWithoutSubmitSpace : correctedValue;
+      } else {
+        setTypingFeedback('');
+        updateKeyboardGuide(val, targetClean);
       }
       return;
     }
@@ -1362,18 +1410,19 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
         triggerConfetti();
         setFeedbackEffect('correct');
         setScore(prev => prev + matchedBubble.word.length * 20); // Longer word, more reward points
+        setTypingFeedback('');
 
         // Remove bubble
         setBubbles(prev => prev.filter(b => b.id !== matchedBubble.id));
         setTypedValue('');
         setRawTypedValue('');
         e.target.value = ''; // clean actual input
-        
+
         // Spawn more bubbles to maintain pace
         setTimeout(spawnBubble, 500);
         return;
       }
-      
+
       // Only apply auto-clear logic if there's actually content in the input
       // and it ends with space (user completed a word attempt)
       if (val.trim() && rawInput.endsWith(' ')) {
@@ -1389,74 +1438,65 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
     }
 
     // STANDARD MODE TYPING PROCESS
-    // For levels 7, 8, 9 (word/sentence mode): check full word match before reporting error
-    // For levels 1-6 (letter mode): check letter by letter
     const isWordMode = ['lvl-7', 'lvl-8', 'lvl-9'].includes(level.id);
-    
-    // Auto-advance if fully matches (case-insensitive to support capitalization leniency)
+    const isSubmitAttempt = rawInput.endsWith(' ') && rawInput.trim().length > 0;
     const valTrimmed = val.trim();
-    const isWordComplete = val.toLowerCase() === targetClean.toLowerCase() || 
-                           (valTrimmed.toLowerCase() === targetClean.toLowerCase() && rawInput.endsWith(' '));
 
-    if (isWordComplete) {
-      // Finished word!
-      playSound('correct');
-      setFeedbackEffect('correct');
-      
-      const scoreGain = targetClean.length * 10;
-      setScore(prev => prev + scoreGain);
-      
-      // Clear input
-      setTypedValue('');
-      setRawTypedValue('');
-      e.target.value = '';
+    if (isWordMode) {
+      const isWordComplete = valTrimmed.toLowerCase() === targetClean.toLowerCase();
 
-      // Advance
-      if (currentIndex + 1 >= targetItems.length) {
-        // level complete!
-        handleLevelComplete();
-      } else {
-        setCurrentIndex(prev => prev + 1);
-        updateKeyboardGuide('', targetItems[currentIndex + 1]);
+      if (isSubmitAttempt && isWordComplete) {
+        playSound('correct');
+        setFeedbackEffect('correct');
+        setTypingFeedback('');
+
+        const scoreGain = targetClean.length * 10;
+        setScore(prev => prev + scoreGain);
+
+        setTypedValue('');
+        setRawTypedValue('');
+        e.target.value = '';
+
+        if (currentIndex + 1 >= targetItems.length) {
+          handleLevelComplete();
+        } else {
+          setCurrentIndex(prev => prev + 1);
+          updateKeyboardGuide('', targetItems[currentIndex + 1]);
+        }
+        return;
       }
+
+      if (isSubmitAttempt && !isWordComplete) {
+        playSound('wrong');
+        setFeedbackEffect('wrong');
+        setTypingFeedback(getTypingFeedback(valTrimmed, targetClean));
+        setErrors(prev => prev + 1);
+        setTypedValue(valTrimmed);
+        const rawWithoutSubmitSpace = rawInput.trimEnd();
+        setRawTypedValue(rawWithoutSubmitSpace);
+        e.target.value = usesVietnameseKeyboard ? rawWithoutSubmitSpace : valTrimmed;
+        updateKeyboardGuide(valTrimmed, targetClean);
+        return;
+      }
+
+      setTypedValue(val);
+      setTypingFeedback('');
+      updateKeyboardGuide(val, targetClean);
       return;
     }
 
-    // Check if the input is a valid substring or ongoing Vietnamese typing sequence
-    // For word mode (levels 7-9), only report error if the full typed word doesn't match at all
-    // For letter mode (levels 1-6), check prefix match letter by letter
-    let shouldReportError = false;
-    
-    if (isWordMode) {
-      // In word mode, only report error if the converted/final word doesn't match the target at all
-      const convertedVal = val;
-      
-      // Only report error if the typed value is not a prefix of target AND target is not a prefix of typed
-      // This allows users to complete the full word before checking
-      if (convertedVal.length >= targetClean.length) {
-        // User typed as many or more characters than target, check if it matches
-        const isCorrectSequence = usesVietnameseKeyboard
-          ? isVietnamesePrefixMatch(rawInput, targetClean, profile.inputMethod)
-          : targetClean.toLowerCase().startsWith(val.toLowerCase());
-        shouldReportError = !isCorrectSequence;
-      }
-      // If typed value is shorter than target, don't report error yet - let them finish typing
-    } else {
-      // Letter mode (levels 1-6): check prefix match for each keystroke
-      const isCorrectSequence = usesVietnameseKeyboard
-        ? isVietnamesePrefixMatch(rawInput, targetClean, profile.inputMethod)
-        : targetClean.toLowerCase().startsWith(val.toLowerCase());
-      shouldReportError = !isCorrectSequence;
-    }
+    const isCorrectSequence = usesVietnameseKeyboard
+      ? isVietnamesePrefixMatch(rawInput, targetClean, profile.inputMethod)
+      : targetClean.toLowerCase().startsWith(val.toLowerCase());
 
-    if (shouldReportError) {
-      // Typos occurred!
+    if (!isCorrectSequence) {
       playSound('wrong');
       setFeedbackEffect('wrong');
+      setTypingFeedback(getTypingFeedback(val, targetClean));
       setErrors(prev => prev + 1);
     } else {
-      // Correct typing path
       setTypedValue(val);
+      setTypingFeedback('');
       updateKeyboardGuide(val, targetClean);
     }
   };
@@ -1470,11 +1510,11 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
     // Calculate final metrics
     const durationMin = startTime ? (Date.now() - startTime) / 60000 : 0.1; // fallback to 6s
     const keysCount = keystrokes || 1;
-    
+
     // Calculating WPM (words per minute). Standard word is 5 characters.
     const calculatedWpm = Math.round((keysCount / 5) / (durationMin || 0.1));
     const finalWpm = Math.max(5, Math.min(120, calculatedWpm));
-    
+
     // Accuracy
     const correctKeystrokes = Math.max(0, keysCount - errors);
     const finalAccuracy = Math.round((correctKeystrokes / keysCount) * 100);
@@ -1491,7 +1531,7 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
     setWpm(finalWpm);
     setAccuracy(finalAccuracy);
     setStars(earnedStars);
-    
+
     // Play big victory if children earned stars
     if (earnedStars > 0) {
       playSound('victory');
@@ -1502,7 +1542,7 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
 
     setShowResults(true);
     onFinish(earnedStars, score, finalWpm, finalAccuracy);
-    
+
     // Exit fullscreen when results are shown
     setTimeout(() => {
       exitFullscreen();
@@ -1522,7 +1562,7 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
     setIsPlaying(true);
     setShowResults(false);
     playSound('correct');
-    
+
     setTimeout(() => {
       inputRef.current?.focus();
     }, 100);
@@ -1604,8 +1644,8 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
             id="toggle-hand-overlay-btn"
             onClick={() => { playSound('popup'); setShowHandOverlay(!showHandOverlay); }}
             className={`flex items-center gap-1.5 font-bold text-xs px-3 py-2 rounded-full transition-all hover:translate-y-[-2px] ${
-              showHandOverlay 
-                ? 'bg-gradient-to-r from-[#5b8cff] to-[#7aa8ff] text-white shadow-[0_8px_20px_rgba(91,140,255,0.3)]' 
+              showHandOverlay
+                ? 'bg-gradient-to-r from-[#5b8cff] to-[#7aa8ff] text-white shadow-[0_8px_20px_rgba(91,140,255,0.3)]'
                 : 'bg-white text-[#35354a] shadow-[0_8px_20px_rgba(0,0,0,0.06)]'
             }`}
             title="Xem cách đặt tay"
@@ -1636,7 +1676,7 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
                 ? 'ring-4 ring-[#ff7675]/40'
                 : ''
             }`}>
-              
+
               {/* Confetti sparkle overlays */}
               {showConfetti && (
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
@@ -1712,7 +1752,7 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
               {/* BUBBLE POP GAME ARENA */}
               {level.id === 'lvl-10' ? (
                 <div className="relative w-full h-[320px] bg-[#eef7ff] rounded-2xl overflow-hidden">
-                  
+
                   {/* Floating Bubbles */}
                   {bubbles.map((b) => (
                     <div
@@ -1788,7 +1828,7 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
                   {isTypingMode && sentences.length > 0 && (
                     <div className="space-y-4 pt-4 border-t-2 border-dashed border-[#e8e8ed] w-full flex flex-col items-center">
                       <p className="text-xs text-[#8a8aa0] font-black uppercase">Đang gõ:</p>
-                      <div id="target-item-word" className="text-3xl md:text-4xl font-sans tracking-wide font-black text-[#35354a] select-none flex justify-center items-center flex-wrap gap-x-1 gap-y-2 text-center max-w-full">
+                      <div id="target-item-word" className="text-3xl md:text-4xl font-sans tracking-wide font-black text-[#35354a] select-none flex justify-center items-center flex-wrap gap-x-1 gap-y-2 text-center max-w-full leading-relaxed px-2">
                         {currentItem.split('').map((char, index) => {
                           let color;
                           let bg = '';
@@ -1828,7 +1868,7 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
 
                   {/* BIG CHUBBY PRACTICING WORDS */}
                   <div className="space-y-4 w-full">
-                    <div id="target-item-word" className="text-4xl md:text-5xl font-sans tracking-wide font-black text-[#35354a] select-none flex justify-center items-center flex-wrap gap-x-1 gap-y-2 pb-4 border-b-2 border-dashed border-[#e8e8ed]">
+                    <div id="target-item-word" className="text-4xl md:text-5xl font-sans tracking-wide font-black text-[#35354a] select-none flex justify-center items-center flex-wrap gap-x-1 gap-y-2 pb-4 border-b-2 border-dashed border-[#e8e8ed] leading-relaxed px-2">
                       {currentItem.split('').map((char, index) => {
                         let color;
                         let bg = '';
@@ -1866,7 +1906,7 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
                   <p className="text-xs text-[#8a8aa0] font-extrabold uppercase">Gõ chữ theo mẫu trên màn hình máy tính.</p>
                 )}
 
-                <div className="relative w-full max-w-md h-[58px]">
+                <div className="relative w-full max-w-3xl h-[72px]">
                   {/* Real input - hidden visually but focused, type="password" to bypass system IME */}
                   <input
                     id="typing-invisible-buffer"
@@ -1884,10 +1924,10 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
                     autoCorrect="off"
                     spellCheck={false}
                   />
-                  
+
                   {/* Visual representation of the input */}
                   <div
-                    className={`absolute inset-0 w-full h-full rounded-2xl text-[#35354a] shadow-[0_8px_20px_rgba(0,0,0,0.06)] transition-all flex items-center justify-center gap-2 text-xl font-black font-sans tracking-wider px-6 ${
+                    className={`absolute inset-0 w-full h-full rounded-2xl text-[#35354a] shadow-[0_8px_20px_rgba(0,0,0,0.06)] transition-all flex items-center justify-center gap-2 text-2xl font-black font-sans tracking-wider px-8 overflow-hidden ${
                       isFocused ? 'bg-white ring-2 ring-[#5b8cff]/30' : 'bg-[#f4f4f7]'
                     }`}
                   >
@@ -1903,12 +1943,13 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
                       </span>
                     )}
                   </div>
-
-                  <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-1.5 pointer-events-none z-20">
-                    <span className="text-[10px] text-[#35354a] font-bold bg-[#FFEAA7]/70 px-2 py-1 rounded-full">BÀN PHÍM BÉ</span>
-                  </div>
                 </div>
 
+                {typingFeedback && (
+                  <div className="w-full max-w-3xl rounded-2xl bg-rose-50 border-2 border-rose-200 px-4 py-3 text-center text-sm sm:text-base font-black text-rose-600">
+                    {typingFeedback} Bé sửa lại rồi bấm Space nhé.
+                  </div>
+                )}
                 {/* Back-up input focus trigger */}
                 <button
                   id="focus-regain-trigger"
@@ -1968,7 +2009,7 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
               <div className="text-2xl font-black text-[#35354a] font-mono">{score}</div>
               <div className="text-[10px] text-[#8a8aa0] font-bold uppercase mt-0.5">TỔNG ĐIỂM</div>
             </div>
-            
+
             <div className="bg-white p-4 rounded-2xl shadow-[0_12px_30px_rgba(60,60,100,0.08)]">
               <Sparkles className="w-6 h-6 text-[#7aa8ff] mx-auto mb-1" />
               <div className="text-2xl font-black text-[#35354a] font-mono">{wpm}</div>
