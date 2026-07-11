@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import QRCode from 'qrcode';
 import { UserProfile } from '../types';
 import { playSound } from '../utils/audio';
-import { Settings, RotateCcw, Download, Upload, Copy, Check, FileJson, AlertTriangle } from 'lucide-react';
+import { Settings, RotateCcw, Download, Upload, FileJson, AlertTriangle, Camera, CameraOff } from 'lucide-react';
 
 interface SettingsPanelProps {
   profile: UserProfile;
@@ -18,10 +19,43 @@ export default function SettingsPanel({
 }: SettingsPanelProps) {
   const [activeTab, setActiveTab] = useState<'reset' | 'export' | 'import'>('reset');
   const [importCode, setImportCode] = useState('');
-  const [copySuccess, setCopySuccess] = useState(false);
   const [importError, setImportError] = useState<string | null>(null);
   const [showConfirmReset, setShowConfirmReset] = useState(false);
   const [showConfirmImport, setShowConfirmImport] = useState(false);
+  const [qrDataUrl, setQrDataUrl] = useState('');
+  const [isScanningQr, setIsScanningQr] = useState(false);
+  const [scanStatus, setScanStatus] = useState<string | null>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const scanTimerRef = useRef<number | null>(null);
+  const scanStreamRef = useRef<MediaStream | null>(null);
+  const [isParentUnlocked, setIsParentUnlocked] = useState(false);
+  const [parentAnswer, setParentAnswer] = useState('');
+  const [parentError, setParentError] = useState<string | null>(null);
+  const [parentChallenge, setParentChallenge] = useState(() => {
+    const number = Math.floor(Math.random() * 9) + 2;
+    const factor = Math.random() < 0.5 ? 10 : 100;
+    return { number, factor, answer: number * factor };
+  });
+
+  const refreshParentChallenge = () => {
+    const number = Math.floor(Math.random() * 9) + 2;
+    const factor = Math.random() < 0.5 ? 10 : 100;
+    setParentChallenge({ number, factor, answer: number * factor });
+    setParentAnswer('');
+  };
+
+  const handleParentUnlock = () => {
+    if (Number(parentAnswer.trim()) === parentChallenge.answer) {
+      setIsParentUnlocked(true);
+      setParentError(null);
+      playSound('correct');
+      return;
+    }
+
+    setParentError('Sai dap an. Vui long thu phep tinh moi.');
+    refreshParentChallenge();
+    playSound('wrong');
+  };
 
   // Export progress as base64 encoded JSON
   const exportProgress = () => {
@@ -35,20 +69,41 @@ export default function SettingsPanel({
     }
   };
 
-  // Copy export code to clipboard
-  const handleCopyCode = async () => {
+  useEffect(() => {
+    let cancelled = false;
     const code = exportProgress();
-    try {
-      await navigator.clipboard.writeText(code);
-      setCopySuccess(true);
-      playSound('correct');
-      setTimeout(() => setCopySuccess(false), 2000);
-    } catch (e) {
-      console.error('Copy failed:', e);
-      playSound('wrong');
+    if (!code) {
+      setQrDataUrl('');
+      return;
     }
+
+    QRCode.toDataURL(code, { errorCorrectionLevel: 'M', margin: 2, width: 240 })
+      .then((url) => {
+        if (!cancelled) setQrDataUrl(url);
+      })
+      .catch((e) => {
+        console.error('QR generation failed:', e);
+        if (!cancelled) setQrDataUrl('');
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [profile]);
+
+  const stopQrScan = () => {
+    if (scanTimerRef.current !== null) {
+      window.clearInterval(scanTimerRef.current);
+      scanTimerRef.current = null;
+    }
+    scanStreamRef.current?.getTracks().forEach(track => track.stop());
+    scanStreamRef.current = null;
+    setIsScanningQr(false);
   };
 
+  useEffect(() => {
+    return () => stopQrScan();
+  }, []);
   // Download as JSON file
   const handleDownloadJSON = () => {
     try {
@@ -92,6 +147,65 @@ export default function SettingsPanel({
     }
   };
 
+  const handleScannedCode = (code: string) => {
+    const parsed = parseImportCode(code);
+    if (parsed) {
+      window.__pendingImportProfile = parsed;
+      setImportCode(code);
+      setImportError(null);
+      setShowConfirmImport(true);
+      setScanStatus('Da quet QR thanh cong.');
+      stopQrScan();
+      playSound('correct');
+    } else {
+      setImportError('QR khong hop le! Vui long quet dung QR du lieu tien trinh.');
+      playSound('wrong');
+    }
+  };
+
+  const startQrScan = async () => {
+    const BarcodeDetectorCtor = (window as any).BarcodeDetector;
+    if (!BarcodeDetectorCtor) {
+      setImportError('Trinh duyet nay chua ho tro quet QR truc tiep. Vui long dung file JSON de cap nhat du lieu.');
+      playSound('wrong');
+      return;
+    }
+
+    try {
+      setImportError(null);
+      setScanStatus('Dang mo camera...');
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+      scanStreamRef.current = stream;
+      setIsScanningQr(true);
+
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        await videoRef.current.play();
+      }
+
+      const detector = new BarcodeDetectorCtor({ formats: ['qr_code'] });
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d');
+      setScanStatus('Dua QR vao khung camera.');
+
+      scanTimerRef.current = window.setInterval(async () => {
+        const video = videoRef.current;
+        if (!video || !context || video.readyState < 2) return;
+
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const barcodes = await detector.detect(canvas);
+        const rawValue = barcodes?.[0]?.rawValue;
+        if (rawValue) handleScannedCode(rawValue);
+      }, 500);
+    } catch (e) {
+      console.error('QR scan failed:', e);
+      setImportError('Khong mo duoc camera. Vui long kiem tra quyen camera hoac dung file JSON.');
+      stopQrScan();
+      playSound('wrong');
+    }
+  };
   // Handle file upload
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -155,6 +269,63 @@ export default function SettingsPanel({
     setShowConfirmReset(false);
   };
 
+  if (!isParentUnlocked) {
+    return (
+      <div id="settings-parent-gate" className="animate-fade-in">
+        <div className="bg-white rounded-3xl p-6 md:p-8 shadow-[0_12px_30px_rgba(60,60,100,0.08)] border-0 max-w-md mx-auto">
+          <div className="flex items-center gap-4 mb-6 pb-6 border-b border-[rgba(0,0,0,0.08)]">
+            <button
+              onClick={() => { playSound('popup'); onBack(); }}
+              className="w-12 h-12 bg-gradient-to-br from-[#5b8cff] to-[#7aa8ff] text-white rounded-full flex items-center justify-center font-bold shadow-[0_8px_20px_rgba(91,140,255,0.25)] transition-transform hover:scale-105 active:scale-95"
+            >
+              &larr;
+            </button>
+            <div className="flex items-center gap-3">
+              <Settings className="w-8 h-8 text-[#5b8cff]" />
+              <h2 className="text-2xl md:text-3xl font-sans font-black tracking-tight text-[#35354a] uppercase italic">
+                Phu huynh
+              </h2>
+            </div>
+          </div>
+
+          <div className="space-y-5 text-center">
+            <div className="bg-[#f0f7ff] border-2 border-[#5b8cff]/30 rounded-2xl p-5">
+              <p className="text-sm text-[#5b8cff] font-black uppercase mb-2">Khu vuc cai dat danh cho phu huynh</p>
+              <p className="text-[#35354a] font-bold text-lg">Vui long tra loi phep tinh:</p>
+              <div className="text-4xl font-black font-mono text-[#35354a] my-4">
+                {parentChallenge.number} x {parentChallenge.factor} = ?
+              </div>
+              <input
+                value={parentAnswer}
+                onChange={(e) => {
+                  setParentAnswer(e.target.value.replace(/[^0-9]/g, ''));
+                  setParentError(null);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleParentUnlock();
+                }}
+                inputMode="numeric"
+                className="w-full h-14 text-center text-2xl font-black font-mono rounded-xl bg-white border-2 border-[#dce8ff] text-[#35354a] focus:outline-none focus:border-[#5b8cff]"
+                placeholder="Nhap dap an"
+                autoFocus
+              />
+              {parentError && (
+                <p className="text-red-500 font-bold text-sm mt-3">{parentError}</p>
+              )}
+            </div>
+
+            <button
+              onClick={handleParentUnlock}
+              disabled={!parentAnswer.trim()}
+              className="w-full bg-gradient-to-br from-[#5b8cff] to-[#7aa8ff] disabled:from-gray-300 disabled:to-gray-400 text-white font-black py-4 px-6 rounded-2xl shadow-lg transition-all hover:translate-y-[-2px] active:translate-y-0 uppercase tracking-wide disabled:cursor-not-allowed disabled:hover:translate-y-0"
+            >
+              Vao cai dat
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
   return (
     <div id="settings-panel-view" className="animate-fade-in">
       <div className="bg-white rounded-3xl p-6 md:p-8 shadow-[0_12px_30px_rgba(60,60,100,0.08)] border-0 max-w-2xl mx-auto">
@@ -279,38 +450,24 @@ export default function SettingsPanel({
                 </div>
 
                 <div className="space-y-4">
-                  <div className="bg-white rounded-xl p-4 border border-blue-100">
-                    <p className="text-xs text-gray-500 font-bold mb-2">MÃ SAO LƯU (Base64):</p>
-                    <code className="block w-full bg-gray-50 text-xs text-gray-700 p-3 rounded-lg break-all font-mono max-h-32 overflow-y-auto">
-                      {exportProgress()}
-                    </code>
+                  <div className="bg-white rounded-xl p-4 border border-blue-100 flex flex-col items-center gap-3">
+                    <p className="text-xs text-gray-500 font-bold uppercase">QR du lieu tien trinh</p>
+                    {qrDataUrl ? (
+                      <img src={qrDataUrl} alt="QR du lieu tien trinh" className="w-60 h-60 rounded-xl border border-blue-100 bg-white p-2" />
+                    ) : (
+                      <div className="w-60 h-60 rounded-xl border border-blue-100 bg-gray-50 flex items-center justify-center text-gray-400 font-bold text-sm">
+                        Dang tao QR...
+                      </div>
+                    )}
                   </div>
 
-                  <div className="flex gap-3">
-                    <button
-                      onClick={handleCopyCode}
-                      className="flex-1 bg-gradient-to-br from-blue-500 to-blue-600 text-white font-bold py-3 px-4 rounded-xl shadow-lg transition-all hover:translate-y-[-2px] flex items-center justify-center gap-2"
-                    >
-                      {copySuccess ? (
-                        <>
-                          <Check className="w-4 h-4" />
-                          Đã Sao Chép!
-                        </>
-                      ) : (
-                        <>
-                          <Copy className="w-4 h-4" />
-                          Sao Chép Mã
-                        </>
-                      )}
-                    </button>
-                    <button
-                      onClick={handleDownloadJSON}
-                      className="flex-1 bg-gradient-to-br from-green-500 to-green-600 text-white font-bold py-3 px-4 rounded-xl shadow-lg transition-all hover:translate-y-[-2px] flex items-center justify-center gap-2"
-                    >
-                      <Download className="w-4 h-4" />
-                      Tải File .JSON
-                    </button>
-                  </div>
+                  <button
+                    onClick={handleDownloadJSON}
+                    className="w-full bg-gradient-to-br from-green-500 to-green-600 text-white font-bold py-3 px-4 rounded-xl shadow-lg transition-all hover:translate-y-[-2px] flex items-center justify-center gap-2"
+                  >
+                    <Download className="w-4 h-4" />
+                    Tai du lieu
+                  </button>
                 </div>
               </div>
             </div>
@@ -340,18 +497,24 @@ export default function SettingsPanel({
                 )}
 
                 <div className="space-y-4">
-                  <div className="bg-white rounded-xl p-4 border border-purple-100">
-                    <label className="block text-xs text-gray-500 font-bold mb-2">
-                      DÁN MÃ SAO LƯU HOẶC TẢI FILE LÊN:
-                    </label>
-                    <textarea
-                      value={importCode}
-                      onChange={(e) => setImportCode(e.target.value)}
-                      placeholder="Dán mã base64 vào đây..."
-                      className="w-full h-24 text-xs p-3 border border-gray-200 rounded-lg resize-none focus:outline-none focus:border-purple-300 font-mono"
-                    />
-                    <div className="mt-3 flex items-center gap-2">
-                      <span className="text-xs text-gray-500 font-bold">HOẶC</span>
+                  <div className="bg-white rounded-xl p-4 border border-purple-100 space-y-3">
+                    <button
+                      onClick={isScanningQr ? stopQrScan : startQrScan}
+                      className="w-full bg-gradient-to-br from-purple-500 to-purple-600 text-white font-bold py-3 px-4 rounded-xl shadow-lg transition-all hover:translate-y-[-2px] flex items-center justify-center gap-2"
+                    >
+                      {isScanningQr ? <CameraOff className="w-4 h-4" /> : <Camera className="w-4 h-4" />}
+                      {isScanningQr ? 'Dung quet QR' : 'Quet QR'}
+                    </button>
+
+                    {isScanningQr && (
+                      <div className="space-y-2">
+                        <video ref={videoRef} className="w-full aspect-video rounded-xl bg-black object-cover" muted playsInline />
+                        {scanStatus && <p className="text-xs text-purple-600 font-bold text-center">{scanStatus}</p>}
+                      </div>
+                    )}
+
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-gray-500 font-bold">HOAC</span>
                       <label className="flex-1 cursor-pointer">
                         <input
                           type="file"
@@ -361,22 +524,13 @@ export default function SettingsPanel({
                         />
                         <div className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-lg text-center transition-colors flex items-center justify-center gap-2">
                           <Upload className="w-4 h-4" />
-                          Chọn File .JSON
+                          Cap nhat du lieu
                         </div>
                       </label>
                     </div>
                   </div>
 
-                  {!showConfirmImport ? (
-                    <button
-                      onClick={handleImportCode}
-                      disabled={!importCode.trim()}
-                      className="w-full bg-gradient-to-br from-purple-500 to-purple-600 disabled:from-gray-300 disabled:to-gray-400 text-white font-black py-4 px-6 rounded-2xl shadow-lg transition-all hover:translate-y-[-2px] active:translate-y-0 uppercase tracking-wide disabled:cursor-not-allowed disabled:hover:translate-y-0"
-                    >
-                      <Upload className="w-5 h-5 inline mr-2" />
-                      Nhập Tiến Trình
-                    </button>
-                  ) : (
+                  {showConfirmImport && (
                     <div className="space-y-3">
                       <p className="text-center font-bold text-purple-700">
                         ⚠️ Tiến trình hiện tại sẽ bị ghi đè! Tiếp tục nhé?

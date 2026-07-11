@@ -765,9 +765,53 @@ function convertWordToVietnamese(word: string, method?: 'telex' | 'vni'): string
   return leading + result + trailing;
 }
 
+const vietnameseWordExceptions: Record<string, string[]> = {
+  'l\u1EAFm': ['\u1EAFm'],
+  'luy\u1EC7n': ['lu\u1EF5\u00EAn', 'luy\u1ECDn', 'luy\u00EAn'],
+};
+
+function splitWordEdges(word: string): { leading: string; core: string; trailing: string } {
+  const leadingMatch = word.match(/^[^\p{L}\p{N}]+/u);
+  const leading = leadingMatch ? leadingMatch[0] : '';
+  const trailingMatch = word.match(/[^\p{L}\p{N}]+$/u);
+  const trailing = trailingMatch ? trailingMatch[0] : '';
+  return {
+    leading,
+    core: word.slice(leading.length, word.length - trailing.length),
+    trailing
+  };
+}
+
+function applyVietnameseWordExceptions(inputVal: string, targetStr: string): string {
+  if (!inputVal || !targetStr) return inputVal;
+
+  const inputWords = inputVal.split(' ');
+  const targetWords = targetStr.split(' ');
+
+  return inputWords.map((inputWord, index) => {
+    const targetWord = targetWords[index];
+    if (!targetWord) return inputWord;
+
+    const inputParts = splitWordEdges(inputWord);
+    const targetParts = splitWordEdges(targetWord);
+    const acceptedVariants = vietnameseWordExceptions[targetParts.core.toLowerCase()];
+
+    if (!acceptedVariants) return inputWord;
+
+    const inputCoreLower = inputParts.core.toLowerCase();
+    if (acceptedVariants.some(variant => variant.toLowerCase() === inputCoreLower)) {
+      return `${inputParts.leading}${targetParts.core}${inputParts.trailing}`;
+    }
+
+    return inputWord;
+  }).join(' ');
+}
 function isVietnamesePrefixMatch(inputVal: string, targetStr: string, method?: 'telex' | 'vni'): boolean {
   const currentMethod = method || 'telex';
-  const convertedWords = inputVal.split(' ').map(w => convertWordToVietnamese(w, currentMethod)).join(' ');
+  const convertedWords = applyVietnameseWordExceptions(
+    inputVal.split(' ').map(w => convertWordToVietnamese(w, currentMethod)).join(' '),
+    targetStr
+  );
   if (targetStr.toLowerCase().startsWith(convertedWords.toLowerCase())) {
     return true;
   }
@@ -1204,6 +1248,7 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
     let val = rawInput;
     if (usesVietnameseKeyboard) {
       val = rawInput.split(' ').map(w => convertWordToVietnamese(w, profile.inputMethod)).join(' ');
+      val = applyVietnameseWordExceptions(val, targetClean);
     } else {
       val = normalizeInputByTarget(rawInput, targetClean);
     }
