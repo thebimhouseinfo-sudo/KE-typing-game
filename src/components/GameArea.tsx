@@ -786,8 +786,37 @@ const vietnameseWordExceptions: Record<string, string[]> = {
   'ph\u00EDm': ['p\u00EDm'],
   'v\u1EBB': ['\u1EBB'],
   'l\u1EAFm': ['\u1EAFm', 'l\u00E1m'],
+  'chuy\u1EC7n': ['chu\u1EF5\u00EAn', 'chu\u1EF5en', 'chuy\u1ECDn', 'chuy\u00EAn'],
   'luy\u1EC7n': ['lu\u1EF5\u00EAn', 'lu\u1EF5en', 'luy\u1ECDn', 'luy\u00EAn'],
+  'huy\u1EC7n': ['hu\u1EF5\u00EAn', 'hu\u1EF5en', 'huy\u1ECDn', 'huy\u00EAn'],
+  'luy\u1EBFn': ['lu\u00FD\u00EAn', 'lu\u00FDen', 'luy\u00EAn'],
+  'tuy\u1EBFt': ['tu\u00FD\u00EAt', 'tu\u00FDet', 'tuy\u00EAt'],
+  'huy\u1EBFt': ['hu\u00FD\u00EAt', 'hu\u00FDet', 'huy\u00EAt'],
+  'thuy\u1EBFt': ['thu\u00FD\u00EAt', 'thu\u00FDet', 'thuy\u00EAt'],
+  'tuy\u1EC7t': ['tu\u1EF5\u00EAt', 'tu\u1EF5et', 'tuy\u00EAt'],
+  'duy\u1EC7t': ['du\u1EF5\u00EAt', 'du\u1EF5et', 'duy\u00EAt'],
 };
+
+const misplacedUyTonePairs: Array<[string, string]> = [
+  ['y\u1EBF', '\u00FD\u00EA'],
+  ['y\u1EC7', '\u1EF5\u00EA'],
+  ['y\u1EC1', '\u1EF3\u00EA'],
+  ['y\u1EC3', '\u1EF7\u00EA'],
+  ['y\u1EC5', '\u1EF9\u00EA'],
+];
+
+function getMisplacedUyToneVariants(targetCore: string): string[] {
+  const lower = targetCore.toLowerCase();
+  const variants = new Set<string>();
+
+  misplacedUyTonePairs.forEach(([correct, misplaced]) => {
+    if (lower.includes(correct)) {
+      variants.add(lower.replace(correct, misplaced));
+    }
+  });
+
+  return [...variants];
+}
 
 function splitWordEdges(word: string): { leading: string; core: string; trailing: string } {
   const leadingMatch = word.match(/^[^\p{L}\p{N}]+/u);
@@ -813,9 +842,13 @@ function applyVietnameseWordExceptions(inputVal: string, targetStr: string): str
 
     const inputParts = splitWordEdges(inputWord);
     const targetParts = splitWordEdges(targetWord);
-    const acceptedVariants = vietnameseWordExceptions[targetParts.core.toLowerCase()];
+    const targetCoreLower = targetParts.core.toLowerCase();
+    const acceptedVariants = [
+      ...(vietnameseWordExceptions[targetCoreLower] || []),
+      ...getMisplacedUyToneVariants(targetCoreLower),
+    ];
 
-    if (!acceptedVariants) return inputWord;
+    if (acceptedVariants.length === 0) return inputWord;
 
     const inputCoreLower = inputParts.core.toLowerCase();
     if (acceptedVariants.some(variant => variant.toLowerCase() === inputCoreLower)) {
