@@ -24,6 +24,23 @@ interface Bubble {
   color: string;
   size: number;
 }
+const LEVEL_9_STORIES: Array<{ title: string; sentences: string[] }> = [
+  { title: 'Ngày mới của bé An', sentences: [
+    'Sáng nay, bé An thức dậy rất sớm.', 'Em gấp chăn gọn gàng trên giường.', 'Mẹ khen An là một em bé chăm chỉ.', 'An đánh răng rồi rửa mặt thật sạch.', 'Bữa sáng có bánh mì và một ly sữa.', 'Ba chở An đến trường bằng xe đạp.', 'Trên đường, An nhìn thấy hàng cây xanh.', 'Bạn Mai đứng chờ An trước cổng lớp.', 'Cô giáo mỉm cười chào cả lớp.', 'Tiết học đầu tiên là môn Tiếng Việt.', 'An đọc bài to, rõ và rất tự tin.', 'Giờ ra chơi, các bạn cùng nhảy dây.', 'An chia bánh nhỏ cho bạn bên cạnh.', 'Buổi trưa, em ăn cơm với rau và cá.', 'Sau giờ ngủ, lớp học vẽ bông hoa.', 'An tô cánh hoa màu hồng thật đẹp.', 'Cuối ngày, cô giáo phát phiếu bé ngoan.', 'An vui vẻ khoe phiếu với mẹ.', 'Tối đến, em ôn lại bài trong vở.', 'An đi ngủ sớm để mai học thật tốt.'
+  ]},
+  { title: 'Khu vườn sau nhà', sentences: [
+    'Sau nhà bé Linh có một khu vườn nhỏ.', 'Mỗi sáng, ông tưới nước cho cây.', 'Linh cầm bình nhỏ tưới khóm hoa cúc.', 'Những giọt nước long lanh trên chiếc lá.', 'Một chú bướm vàng bay qua hàng rào.', 'Con mèo Mi nằm ngủ dưới gốc cau.', 'Bà hái rau thơm để nấu bữa trưa.', 'Linh nhặt lá khô bỏ vào chiếc rổ.', 'Ông chỉ cho Linh cây ổi non.', 'Trên cành cao có vài quả ổi xanh.', 'Linh nghe tiếng chim hót líu lo.', 'Gió nhẹ làm lá cây rung rinh.', 'Mùi đất ẩm thơm sau cơn mưa.', 'Bé Linh thấy một mầm cây mới.', 'Em vui mừng gọi ông ra xem.', 'Ông nói cây cũng cần được yêu thương.', 'Linh hứa sẽ chăm vườn mỗi ngày.', 'Chiều xuống, khu vườn mát và yên bình.', 'Cả nhà ngồi uống trà dưới mái hiên.', 'Linh yêu khu vườn xanh sau nhà.'
+  ]},
+  { title: 'Chuyến đi thư viện', sentences: [
+    'Hôm thứ bảy, lớp em đi thư viện.', 'Cô giáo dặn cả lớp đi thật nhẹ.', 'Thư viện có nhiều kệ sách cao.', 'Mỗi bạn được chọn một quyển sách.', 'Nam chọn sách kể về đại dương.', 'Lan chọn sách có nhiều tranh đẹp.', 'Em chọn truyện về một chú thỏ.', 'Cả lớp ngồi đọc sách rất trật tự.', 'Bạn nào đọc xong sẽ kể lại nội dung.', 'Nam kể về cá heo thông minh.', 'Lan nói về những màu sắc trong tranh.', 'Em kể chuyện chú thỏ biết giúp bạn.', 'Cô giáo khen các bạn đọc chăm chú.', 'Sau đó, cô hướng dẫn cách giữ sách.', 'Không được gấp mép trang sách.', 'Không được vẽ bậy lên trang sách.', 'Mỗi cuốn sách là một người bạn.', 'Ra về, em mượn thêm một quyển truyện.', 'Em hứa sẽ đọc sách mỗi tối.', 'Chuyến đi thư viện làm em rất vui.'
+  ]},
+  { title: 'Ngày hội thể thao', sentences: [
+    'Sân trường hôm nay có ngày hội thể thao.', 'Các lớp mặc áo đồng phục rất đẹp.', 'Cô tổng phụ trách thổi còi khai mạc.', 'Đội của Minh tham gia chạy tiếp sức.', 'Minh cầm gậy chạy thật nhanh.', 'Bạn Hòa đứng chờ ở vạch kế tiếp.', 'Cả lớp cổ vũ rất nhiệt tình.', 'Sau cuộc chạy là trò kéo co.', 'Các bạn nắm dây và cùng hô vang.', 'Đội nào cũng cố gắng hết sức.', 'Minh thấy áo mình ướt mồ hôi.', 'Nhưng em vẫn cười rất tươi.', 'Cô giáo phát nước cho cả đội.', 'Bạn nào cũng biết nói lời cảm ơn.', 'Cuối buổi, lớp Minh nhận giải khuyến khích.', 'Cả đội chụp ảnh dưới lá cờ.', 'Minh học được cách phối hợp với bạn.', 'Em hiểu rằng thắng thua không quan trọng.', 'Điều vui nhất là cùng nhau cố gắng.', 'Ngày hội thể thao thật đáng nhớ.'
+  ]},
+  { title: 'Bữa cơm gia đình', sentences: [
+    'Chiều nay, cả nhà cùng nấu cơm.', 'Mẹ vo gạo rồi đặt nồi cơm.', 'Ba rửa rau thật sạch trong chậu.', 'Bé Na lau bàn ăn giúp mẹ.', 'Anh Hai xếp bát đũa ngay ngắn.', 'Trong bếp thơm mùi canh bí đỏ.', 'Na thích món trứng chiên vàng ươm.', 'Mẹ nhắc Na rửa tay trước khi ăn.', 'Cả nhà ngồi quanh chiếc bàn tròn.', 'Ba kể chuyện vui ở cơ quan.', 'Anh Hai kể chuyện lớp học hôm nay.', 'Na kể rằng em được cô khen.', 'Mẹ gắp rau vào bát cho Na.', 'Na nói cảm ơn mẹ thật lễ phép.', 'Sau bữa cơm, em phụ dọn bát.', 'Ba rửa bát còn mẹ lau bếp.', 'Anh Hai quét nhà thật nhanh.', 'Na thấy làm việc cùng nhau rất vui.', 'Gia đình em luôn yêu thương nhau.', 'Bữa cơm tối làm ngôi nhà ấm áp.'
+  ]}
+];
 
 // Map characters to their keyboard fingers
 function getFingerForKey(char: string): string | null {
@@ -766,8 +783,10 @@ function convertWordToVietnamese(word: string, method?: 'telex' | 'vni'): string
 }
 
 const vietnameseWordExceptions: Record<string, string[]> = {
-  'l\u1EAFm': ['\u1EAFm'],
-  'luy\u1EC7n': ['lu\u1EF5\u00EAn', 'luy\u1ECDn', 'luy\u00EAn'],
+  'ph\u00EDm': ['p\u00EDm'],
+  'v\u1EBB': ['\u1EBB'],
+  'l\u1EAFm': ['\u1EAFm', 'l\u00E1m'],
+  'luy\u1EC7n': ['lu\u1EF5\u00EAn', 'lu\u1EF5en', 'luy\u1ECDn', 'luy\u00EAn'],
 };
 
 function splitWordEdges(word: string): { leading: string; core: string; trailing: string } {
@@ -953,6 +972,7 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
   
   // Game metrics
   const [typedValue, setTypedValue] = useState('');
+  const [rawTypedValue, setRawTypedValue] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [score, setScore] = useState(0);
   const [keystrokes, setKeystrokes] = useState(0);
@@ -979,8 +999,9 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
   const gameIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const bubbleSpawnTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Level 9 custom text input state
+  // Level 9 built-in story practice state
   const [customTextInput, setCustomTextInput] = useState('');
+  const [selectedStoryTitle, setSelectedStoryTitle] = useState('');
   const [sentences, setSentences] = useState<string[]>([]);
   const [currentSentenceIndex, setCurrentSentenceIndex] = useState(0);
   const [isTypingMode, setIsTypingMode] = useState(false);
@@ -990,7 +1011,20 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
   // Key tracking helper for the guides
   const [targetPhysKey, setTargetPhysKey] = useState<string | null>(' ');
 
-  // Split text into chunks of 10 words each (for level 9 typing mode)
+  // Select and show a built-in story for level 9.
+  const pickLevel9Story = () => {
+    const story = LEVEL_9_STORIES[Math.floor(Math.random() * LEVEL_9_STORIES.length)];
+    setSelectedStoryTitle(story.title);
+    setSentences(story.sentences);
+    setCurrentSentenceIndex(0);
+    setCurrentIndex(0);
+    setTypedValue('');
+    setRawTypedValue('');
+    setIsTypingMode(true);
+    setTimeout(() => inputRef.current?.focus(), 100);
+    updateKeyboardGuide('', story.sentences[0]);
+  };
+
   const getSentences = (text: string): string[] => {
     const words = text.trim().split(/\s+/).filter(w => w.length > 0);
     const chunks: string[] = [];
@@ -1004,8 +1038,8 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
     return chunks;
   };
 
-  // Get current raw items - For lvl-9, use sentences if in typing mode
-  const targetItems = level.id === 'lvl-9' && isTypingMode && sentences.length > 0 
+  // Get current raw items - For lvl-9, use the selected built-in story.
+  const targetItems = level.id === 'lvl-9' && sentences.length > 0 
     ? sentences 
     : (level.id === 'lvl-9' && customTextInput.trim() ? [customTextInput.trim()] : level.targetItems);
   
@@ -1017,6 +1051,13 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
   // Helper boolean to check if active level is a Vietnamese accent or phrase level
   const isVietnameseLevel = ['vietnamese', 'typing-challenge'].includes(level.category);
   const usesVietnameseKeyboard = ['vietnamese', 'typing-challenge'].includes(level.category);
+
+  // Pick one random built-in story when level 9 starts.
+  useEffect(() => {
+    if (level.id === 'lvl-9' && sentences.length === 0) {
+      pickLevel9Story();
+    }
+  }, [level.id, sentences.length]);
 
   // Start initialization
   useEffect(() => {
@@ -1206,6 +1247,7 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
     // Quick clear feature for Enter or Escape inside Bubble Race to help spelling flow
     if (level.id === 'lvl-10' && (key === 'Enter' || key === 'Escape')) {
       setTypedValue('');
+      setRawTypedValue('');
       e.currentTarget.value = '';
     }
   };
@@ -1249,10 +1291,11 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
     if (usesVietnameseKeyboard) {
       val = rawInput.split(' ').map(w => convertWordToVietnamese(w, profile.inputMethod)).join(' ');
       val = applyVietnameseWordExceptions(val, targetClean);
+      setRawTypedValue(rawInput);
     } else {
       val = normalizeInputByTarget(rawInput, targetClean);
+      e.target.value = val;
     }
-    e.target.value = val;
     
     // Start timing on first keypress
     if (startTime === null) {
@@ -1274,6 +1317,7 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
         
         // Clear input
         setTypedValue('');
+        setRawTypedValue('');
         e.target.value = '';
         
         // Move to next sentence or finish
@@ -1293,7 +1337,7 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
       
       // Check prefix match using Vietnamese-aware comparison
       const isCorrectSequence = usesVietnameseKeyboard
-        ? isVietnamesePrefixMatch(val, targetClean, profile.inputMethod)
+        ? isVietnamesePrefixMatch(rawInput, targetClean, profile.inputMethod)
         : targetClean.startsWith(val);
       if (isCorrectSequence) {
         updateKeyboardGuide(val, targetClean);
@@ -1322,6 +1366,7 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
         // Remove bubble
         setBubbles(prev => prev.filter(b => b.id !== matchedBubble.id));
         setTypedValue('');
+        setRawTypedValue('');
         e.target.value = ''; // clean actual input
         
         // Spawn more bubbles to maintain pace
@@ -1336,6 +1381,7 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
         if (!hasPrefixMatch) {
           // Clear only if the typed word doesn't match the start of any bubble
           setTypedValue('');
+          setRawTypedValue('');
           e.target.value = '';
         }
       }
@@ -1362,6 +1408,7 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
       
       // Clear input
       setTypedValue('');
+      setRawTypedValue('');
       e.target.value = '';
 
       // Advance
@@ -1382,9 +1429,7 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
     
     if (isWordMode) {
       // In word mode, only report error if the converted/final word doesn't match the target at all
-      const convertedVal = usesVietnameseKeyboard 
-        ? val.split(' ').map(w => convertWordToVietnamese(w, profile.inputMethod)).join(' ')
-        : val;
+      const convertedVal = val;
       
       // Only report error if the typed value is not a prefix of target AND target is not a prefix of typed
       // This allows users to complete the full word before checking
@@ -1471,6 +1516,7 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
     setErrors(0);
     setStartTime(null);
     setTypedValue('');
+    setRawTypedValue('');
     setBubbles([]);
     setLives(5);
     setIsPlaying(true);
@@ -1717,69 +1763,22 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
                   {/* Custom Text Input Area */}
                   <div className="w-full space-y-4">
                     {!isTypingMode ? (
-                      <>
-                        <label className="block text-[#35354a] font-sans font-black text-sm uppercase tracking-wide text-center">
-                          📝 Nhập đoạn văn em muốn luyện gõ:
-                        </label>
-                        <div className="relative">
-                          <textarea
-                            id="lvl-9-custom-text-input"
-                            value={customTextInput}
-                            maxLength={1000}
-                            onChange={(e) => {
-                              setCustomTextInput(e.target.value);
-                              setCurrentIndex(0);
-                              setTypedValue('');
-                              playSound('key-press');
-                            }}
-                            placeholder="Nhập văn bản vào để bắt đầu gõ. Bắt buộc gõ đúng chữ viết thường và viết hoa cùng các dấu câu. Nhấn giữ phím Shift và phím chữ để viết chữ in hoa"
-                            className="w-full min-h-[120px] p-4 pb-7 rounded-2xl border-0 bg-[#f4f4f7] text-[#35354a] font-sans text-base font-semibold shadow-[0_12px_30px_rgba(60,60,100,0.08)] focus:shadow-[0_18px_40px_rgba(91,140,255,0.25)] transition-all resize-none placeholder:text-[#8a8aa0] text-center"
-                          />
-                          <span className="absolute bottom-2.5 right-4 text-[10px] text-[#8a8aa0] font-bold font-mono">
-                            {customTextInput.length} / 1000
-                          </span>
-                        </div>
-                        
-                        {customTextInput.trim() && (
-                          <div className="bg-gradient-to-br from-[#5b8cff]/10 to-[#7aa8ff]/10 border-2 border-[#5b8cff]/30 rounded-2xl p-4 flex flex-col items-center gap-2">
-                            <p className="text-xs text-[#8a8aa0] font-bold">
-                              ✨ Đoạn văn của em có <span className="text-[#5b8cff] font-black">{customTextInput.trim().length}</span> ký tự
-                            </p>
-                            <button
-                              onClick={() => {
-                                const sents = getSentences(customTextInput);
-                                setSentences(sents);
-                                setCurrentSentenceIndex(0);
-                                setCurrentIndex(0);
-                                setTypedValue('');
-                                setIsTypingMode(true);
-                                inputRef.current?.focus();
-                                playSound('popup');
-                              }}
-                              className="bg-gradient-to-br from-[#5b8cff] to-[#7aa8ff] text-white font-sans font-black text-sm py-2 px-6 rounded-full shadow-[0_8px_20px_rgba(91,140,255,0.25)] transition-all hover:translate-y-[-2px] active:translate-y-0"
-                            >
-                              🚀 Bắt đầu gõ ngay!
-                            </button>
-                          </div>
-                        )}
-                      </>
+                      <div className="bg-gradient-to-br from-[#5b8cff]/10 to-[#7aa8ff]/10 border-2 border-[#5b8cff]/30 rounded-2xl p-4 flex flex-col items-center gap-2">
+                        <p className="text-sm text-[#5b8cff] font-black uppercase">Đang chọn bài văn cho bé...</p>
+                      </div>
                     ) : (
                       <div className="flex flex-col items-center gap-2">
                         <p className="text-xs text-[#8a8aa0] font-black uppercase">
-                          Phần {currentSentenceIndex + 1} / {sentences.length} · Mỗi phần 10 từ, gõ xong tự động chuyển phần tiếp theo
+                          {selectedStoryTitle || 'Bài văn ngẫu nhiên'} · Câu {currentSentenceIndex + 1} / {sentences.length}
                         </p>
                         <button
                           onClick={() => {
-                            setIsTypingMode(false);
-                            setSentences([]);
-                            setCurrentSentenceIndex(0);
-                            setCurrentIndex(0);
-                            setTypedValue('');
-                            playSound('key-press');
+                            pickLevel9Story();
+                            playSound('popup');
                           }}
                           className="text-xs text-[#8a8aa0] font-bold hover:text-[#5b8cff] transition-colors underline"
                         >
-                          ← Quay lại chỉnh sửa
+                          ↻ Đổi bài văn khác
                         </button>
                       </div>
                     )}
@@ -1873,7 +1872,7 @@ export default function GameArea({ level, profile, onFinish, onBack, onUpdateInp
                     id="typing-invisible-buffer"
                     ref={inputRef}
                     type="password"
-                    value={typedValue}
+                    value={usesVietnameseKeyboard ? rawTypedValue : typedValue}
                     onChange={handleInputChange}
                     onKeyDown={handleKeyDown}
                     onKeyUp={handleKeyUp}
